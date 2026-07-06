@@ -14,17 +14,15 @@ function App() {
   return (
     <AppProvider>
       <Router>
-        <AppLayout>
-          <Routes>
-            <Route path={ROUTES.LANDING} element={<Landing />} />
-            <Route path={ROUTES.FAN_DASHBOARD} element={<FanDashboard />} />
-            <Route path={ROUTES.OPS_DASHBOARD} element={<OperationsDashboard />} />
-            <Route path={ROUTES.ACCESSIBILITY} element={<AccessibilityCenter />} />
-            <Route path={ROUTES.SUSTAINABILITY} element={<Sustainability />} />
-            <Route path={ROUTES.SETTINGS} element={<Settings />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </AppLayout>
+        <Routes>
+          <Route path={ROUTES.LANDING} element={<Landing />} />
+          <Route path={ROUTES.FAN_DASHBOARD} element={<AppLayout><FanDashboard /></AppLayout>} />
+          <Route path={ROUTES.OPS_DASHBOARD} element={<AppLayout><OperationsDashboard /></AppLayout>} />
+          <Route path={ROUTES.ACCESSIBILITY} element={<AppLayout><AccessibilityCenter /></AppLayout>} />
+          <Route path={ROUTES.SUSTAINABILITY} element={<AppLayout><Sustainability /></AppLayout>} />
+          <Route path={ROUTES.SETTINGS} element={<AppLayout><Settings /></AppLayout>} />
+          <Route path="*" element={<AppLayout><NotFound /></AppLayout>} />
+        </Routes>
       </Router>
     </AppProvider>
   );
