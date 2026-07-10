@@ -6,7 +6,8 @@ import {
   getRecommendations,
   createAnnouncement,
   predictRisk,
-  uploadCsv,
+  parseCsvFile,
+  analyzeCsvStats,
   getHistory,
   logOutcome,
   getMetrics,
@@ -32,8 +33,9 @@ router.post('/recommendations', getRecommendations);
 router.post('/summarize-incident', summarizeIncident);
 router.post('/announcement', createAnnouncement);
 
-// 3. CSV File Upload Analysis Pipeline Route
-router.post('/upload-csv', upload.single('file'), uploadCsv);
+// 3. CSV Ingest and Analytics Routes
+router.post('/parse-csv', upload.single('file'), parseCsvFile);
+router.post('/analyze-stats', analyzeCsvStats);
 
 // 4. Decision History Logging Outcomes
 router.get('/history', getHistory);

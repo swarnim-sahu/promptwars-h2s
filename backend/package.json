@@ -20,7 +20,8 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "morgan": "^1.11.0",
-    "multer": "^2.2.0"
+    "multer": "^2.2.0",
+    "papaparse": "^5.5.4"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
@@ -28,6 +29,7 @@
     "@types/morgan": "^1.9.10",
     "@types/multer": "^2.2.0",
     "@types/node": "^26.1.0",
+    "@types/papaparse": "^5.5.2",
     "nodemon": "^3.1.14",
     "prettier": "^3.9.4",
     "ts-node": "^10.9.2",

@@ -9,6 +9,7 @@ import {
   incidentSummaryPrompt_v1,
   announcementPrompt_v1,
   translationPrompt_v1,
+  csvAnalysisPrompt_v1,
 } from './promptBuilder';
 
 // Mock Databases in-memory
@@ -303,28 +304,49 @@ class GeminiService {
     return validation.data;
   }
 
-  // 6. CSV Pipeline upload analysis (Simulation/Sandbox)
-  async analyzeUploadedCsv(csvString: string): Promise<AIResponse> {
+  // 6. CSV Pipeline upload analysis (Real Gemini SDK Integration)
+  async analyzeUploadedCsv(csvStatsJson: string): Promise<AIResponse> {
     const startTime = Date.now();
-    const prompt = `Analyze CSV Data:\n${csvString}`;
+    const prompt = csvAnalysisPrompt_v1(csvStatsJson);
     const promptVersion = 'csvAnalysisPrompt_v1';
 
-    const simulatedPayload = {
-      ...mockAIResponse,
-      summary: "CSV analysis completed. Evaluated 250 rows of turnstile entry speeds. Detected peak gate saturation at 14:45.",
-      riskLevel: 'Medium',
-    };
-    const validation = validateAIResponse(simulatedPayload);
+    let validatedData: AIResponse;
+    let success = false;
+    let responseText = '';
+
+    try {
+      // Execute the Gemini call using our wrapper containing timeout and retry protections
+      responseText = await this.executeGeminiCallWithRetryAndTimeout(prompt);
+      
+      let parsed;
+      try {
+        parsed = JSON.parse(responseText);
+      } catch (parseErr: any) {
+        throw new Error(`Failed to parse Gemini response as JSON: ${parseErr.message}`);
+      }
+
+      const validation = validateAIResponse(parsed);
+      validatedData = validation.data;
+      success = validation.valid;
+
+    } catch (error: any) {
+      console.error('[Gemini Service Error] analyzeUploadedCsv execution failed:', error.stack || error.message);
+      
+      // Safety operational fallback in case of errors/validation failure
+      validatedData = getSafeFallback(`Gemini CSV execution failure: ${error.message}`);
+      success = false;
+      responseText = JSON.stringify(validatedData);
+    }
 
     this.logMetric(
       'CSV Analysis',
       promptVersion,
       startTime,
-      validation.valid,
-      JSON.stringify(validation.data).length
+      success,
+      responseText.length
     );
 
-    return validation.data;
+    return validatedData;
   }
 
   // 7. Decision History & Outcome logging

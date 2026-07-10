@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { MatchStatusCard } from '../components/operations/MatchStatusCard';
 import { KPIsGrid } from '../components/operations/KPIsGrid';
 import { StadiumHeatmap } from '../components/operations/StadiumHeatmap';
@@ -6,8 +6,12 @@ import { AIDecisionCard } from '../components/operations/AIDecisionCard';
 import { SystemHealthPanel } from '../components/operations/SystemHealthPanel';
 import { LiveEventFeed } from '../components/operations/LiveEventFeed';
 import { AnalyticsCharts } from '../components/operations/AnalyticsCharts';
+import { TelemetryUploadCard } from '../components/operations/TelemetryUploadCard';
+import type { AIResponse } from '../types';
 
 export const OperationsDashboard: React.FC = () => {
+  const [csvAnalysisResult, setCsvAnalysisResult] = useState<AIResponse | null>(null);
+
   return (
     <div className="space-y-8">
       {/* Title Header */}
@@ -22,10 +26,19 @@ export const OperationsDashboard: React.FC = () => {
       {/* Numerical count-up KPI gauges */}
       <KPIsGrid />
 
+      {/* Drag & Drop Telemetry CSV Ingest and Analytics Section */}
+      <TelemetryUploadCard 
+        onAnalysisComplete={setCsvAnalysisResult} 
+        onReset={() => setCsvAnalysisResult(null)} 
+      />
+
       {/* Center Layout: Heatmap Seating Map & AI Decision advisory checklist */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <StadiumHeatmap />
-        <AIDecisionCard />
+        <AIDecisionCard 
+          csvAnalysisResult={csvAnalysisResult || undefined} 
+          onResetManual={() => setCsvAnalysisResult(null)} 
+        />
       </div>
 
       {/* Bottom Layout: Recharts Crowd flow analytics graph, Live match events feed, hardware lines status */}

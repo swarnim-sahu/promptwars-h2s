@@ -37,16 +37,23 @@ class GeminiClientService {
     return res.data.data;
   }
 
-  // 6. CSV Pipeline Upload for Analysis
-  async uploadCsvForAnalysis(file: File): Promise<AIResponse> {
+  // 6. CSV parsing and validation
+  async parseCsvTelemetryFile(file: File, onUploadProgress?: (progressEvent: any) => void): Promise<any> {
     const formData = new FormData();
     formData.append('file', file);
     
-    const res = await apiClient.post('/ai/upload-csv', formData, {
+    const res = await apiClient.post('/ai/parse-csv', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
+      onUploadProgress
     });
+    return res.data.data;
+  }
+
+  // 6b. Analyze statistics with Gemini AI
+  async analyzeCsvTelemetryStats(stats: Record<string, any>): Promise<AIResponse> {
+    const res = await apiClient.post('/ai/analyze-stats', { stats });
     return res.data.data;
   }
 

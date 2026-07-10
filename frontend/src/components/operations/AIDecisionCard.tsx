@@ -5,7 +5,10 @@ import {
   Sparkles, 
   Sliders, 
   Clock, 
-  Check
+  Check,
+  Lock,
+  Download,
+  RotateCcw
 } from 'lucide-react';
 import { geminiService } from '../../services/geminiService';
 import { LoadingState } from '../ai/LoadingState';
@@ -14,8 +17,16 @@ import { ConfidenceIndicator } from '../ai/ConfidenceIndicator';
 import { AIReasoningPanel } from '../ai/AIReasoningPanel';
 import type { AIResponse } from '../../types';
 
-export const AIDecisionCard: React.FC = () => {
-  // Telemetry Inputs State
+interface AIDecisionCardProps {
+  csvAnalysisResult?: AIResponse;
+  onResetManual?: () => void;
+}
+
+export const AIDecisionCard: React.FC<AIDecisionCardProps> = ({ 
+  csvAnalysisResult, 
+  onResetManual 
+}) => {
+  // Telemetry Inputs State (Manual Mode)
   const [gate, setGate] = useState('Gate B');
   const [occupancy, setOccupancy] = useState(89);
   const [entryRate, setEntryRate] = useState(14);
@@ -84,20 +95,56 @@ export const AIDecisionCard: React.FC = () => {
     }
   };
 
+  // Determine active dataset (use CSV upload result if available, otherwise manual state result)
+  const activeResult = csvAnalysisResult || analysisResult;
+  const isCsvMode = !!csvAnalysisResult;
+
+  const handleExportReport = () => {
+    if (!activeResult) return;
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(activeResult, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", `stadiummind-ai-report-${activeResult.analysisId || 'telemetry'}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+  };
+
   return (
-    <div className="rounded-2xl border border-[#1f293d] bg-[#0c1220]/90 shadow-2xl overflow-hidden flex flex-col lg:flex-row h-full min-h-[580px]">
+    <div className="rounded-2xl border border-[#1f293d] bg-[#0c1220]/90 shadow-2xl overflow-hidden flex flex-col lg:flex-row h-full min-h-[580px] relative">
       
       {/* LEFT: Telemetry Controls Drawer */}
-      <div className="w-full lg:w-[240px] p-5 bg-[#121826]/60 border-b lg:border-b-0 lg:border-r border-[#1f293d] space-y-4 flex-shrink-0 flex flex-col justify-between">
+      <div className="w-full lg:w-[240px] p-5 bg-[#121826]/60 border-b lg:border-b-0 lg:border-r border-[#1f293d] space-y-4 flex-shrink-0 flex flex-col justify-between relative">
+        
+        {/* Lock Overlay for CSV Mode */}
+        {isCsvMode && (
+          <div className="absolute inset-0 bg-[#0c1220]/90 backdrop-blur-xs flex flex-col items-center justify-center p-4 text-center z-10 space-y-3">
+            <Lock className="w-8 h-8 text-fifa-gold-500 animate-pulse" />
+            <div className="space-y-1">
+              <span className="block text-xs font-bold text-white">CSV Analytics Active</span>
+              <span className="block text-[10px] text-gray-500 leading-normal font-medium">Manual parameters are locked during log review.</span>
+            </div>
+            {onResetManual && (
+              <button
+                onClick={onResetManual}
+                className="flex items-center space-x-1 border border-fifa-gold-900/30 hover:border-fifa-gold-500 bg-fifa-gold-950/20 text-fifa-gold-400 font-bold text-[10px] px-3.5 py-1.5 rounded-xl transition-all"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Reset Manual Controls</span>
+              </button>
+            )}
+          </div>
+        )}
+
         <div className="space-y-4">
           <div className="flex items-center space-x-2 border-b border-[#1f293d] pb-2.5">
             <Sliders className="w-4 h-4 text-fifa-gold-400" />
-            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Telemetry Inputs</span>
+            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider font-sans">Telemetry Inputs</span>
           </div>
 
           {/* Select Gate */}
           <div className="space-y-1">
-            <label className="text-[9px] font-bold text-gray-500 uppercase tracking-widest block">Gate Sector</label>
+            <label className="text-[9px] font-bold text-gray-500 uppercase tracking-widest block font-sans">Gate Sector</label>
             <select
               value={gate}
               onChange={(e) => setGate(e.target.value)}
@@ -112,7 +159,7 @@ export const AIDecisionCard: React.FC = () => {
 
           {/* Occupancy Percentage */}
           <div className="space-y-1">
-            <div className="flex justify-between text-[9px] font-bold text-gray-500 uppercase tracking-widest">
+            <div className="flex justify-between text-[9px] font-bold text-gray-500 uppercase tracking-widest font-sans">
               <span>Occupancy</span>
               <span className="text-white font-mono">{occupancy}%</span>
             </div>
@@ -128,7 +175,7 @@ export const AIDecisionCard: React.FC = () => {
 
           {/* Entry Rate */}
           <div className="space-y-1">
-            <div className="flex justify-between text-[9px] font-bold text-gray-500 uppercase tracking-widest">
+            <div className="flex justify-between text-[9px] font-bold text-gray-500 uppercase tracking-widest font-sans">
               <span>Entry rate</span>
               <span className="text-white font-mono">{entryRate} /min</span>
             </div>
@@ -144,7 +191,7 @@ export const AIDecisionCard: React.FC = () => {
 
           {/* Weather */}
           <div className="space-y-1">
-            <label className="text-[9px] font-bold text-gray-500 uppercase tracking-widest block">Weather Alert</label>
+            <label className="text-[9px] font-bold text-gray-500 uppercase tracking-widest block font-sans">Weather Alert</label>
             <select
               value={weather}
               onChange={(e) => setWeather(e.target.value)}
@@ -159,7 +206,7 @@ export const AIDecisionCard: React.FC = () => {
 
           {/* Volunteers count */}
           <div className="space-y-1">
-            <div className="flex justify-between text-[9px] font-bold text-gray-500 uppercase tracking-widest">
+            <div className="flex justify-between text-[9px] font-bold text-gray-500 uppercase tracking-widest font-sans">
               <span>Volunteers</span>
               <span className="text-white font-mono">{volunteers} stewards</span>
             </div>
@@ -175,7 +222,7 @@ export const AIDecisionCard: React.FC = () => {
 
           {/* Medical Incidents count */}
           <div className="space-y-1">
-            <div className="flex justify-between text-[9px] font-bold text-gray-500 uppercase tracking-widest">
+            <div className="flex justify-between text-[9px] font-bold text-gray-500 uppercase tracking-widest font-sans">
               <span>Medical logs</span>
               <span className="text-white font-mono">{medicalIncidents} reports</span>
             </div>
@@ -191,7 +238,7 @@ export const AIDecisionCard: React.FC = () => {
 
           {/* Transport Delay */}
           <div className="flex items-center justify-between pt-1">
-            <label className="text-[9px] font-bold text-gray-500 uppercase tracking-widest block">Train/Bus Delay</label>
+            <label className="text-[9px] font-bold text-gray-500 uppercase tracking-widest block font-sans">Train/Bus Delay</label>
             <button
               onClick={() => setTransportDelay(!transportDelay)}
               className={`w-10 h-5 rounded-full p-0.5 transition-all ${
@@ -220,9 +267,26 @@ export const AIDecisionCard: React.FC = () => {
       <div className="flex-1 p-6 flex flex-col justify-between bg-black/10">
         
         {/* Header */}
-        <div className="flex items-center space-x-2 border-b border-[#1f293d] pb-4 mb-4">
-          <Cpu className="w-5 h-5 text-fifa-gold-400" />
-          <h3 className="font-extrabold text-white text-md tracking-tight uppercase">AI Operational Copilot</h3>
+        <div className="flex items-center justify-between border-b border-[#1f293d] pb-4 mb-4">
+          <div className="flex items-center space-x-2">
+            <Cpu className="w-5 h-5 text-fifa-gold-400" />
+            <h3 className="font-extrabold text-white text-md tracking-tight uppercase">
+              {isCsvMode ? "AI Operational Analytics" : "AI Operational Copilot"}
+            </h3>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            {/* Export Action */}
+            {activeResult && (
+              <button
+                onClick={handleExportReport}
+                className="flex items-center space-x-1.5 text-[10px] font-bold text-sky-400 hover:text-sky-300 border border-sky-950 px-2.5 py-1 rounded-lg bg-sky-950/20 transition-all font-sans"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>Export AI Report</span>
+              </button>
+            )}
+          </div>
         </div>
 
         <AnimatePresence mode="wait">
@@ -246,7 +310,7 @@ export const AIDecisionCard: React.FC = () => {
             >
               <ErrorState message={error} onRetry={runAnalysis} />
             </motion.div>
-          ) : analysisResult ? (
+          ) : activeResult ? (
             <motion.div
               key="result"
               initial={{ opacity: 0, y: 10 }}
@@ -258,32 +322,34 @@ export const AIDecisionCard: React.FC = () => {
               {/* Title, Risk and Confidence */}
               <div className="flex items-start justify-between gap-6 border-b border-[#1f293d]/50 pb-3">
                 <div className="space-y-1.5">
-                  <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Advisory Risk Mitigation</span>
+                  <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest font-sans">
+                    {isCsvMode ? "Parsed Dataset AI Synthesis" : "Advisory Risk Mitigation"}
+                  </span>
                   <div className="flex flex-wrap gap-2 pt-0.5">
-                    <span className={`px-2 py-0.5 rounded text-[9px] font-bold border uppercase tracking-wider ${getRiskBadgeColor(analysisResult.riskLevel)}`}>
-                      {analysisResult.riskLevel} Risk
+                    <span className={`px-2 py-0.5 rounded text-[9px] font-bold border uppercase tracking-wider ${getRiskBadgeColor(activeResult.riskLevel)}`}>
+                      {activeResult.riskLevel} Risk
                     </span>
-                    {analysisResult.priority && (
-                      <span className={`px-2 py-0.5 rounded text-[9px] font-bold border uppercase tracking-wider ${getPriorityBadgeColor(analysisResult.priority)}`}>
-                        Priority: {analysisResult.priority}
+                    {activeResult.priority && (
+                      <span className={`px-2 py-0.5 rounded text-[9px] font-bold border uppercase tracking-wider ${getPriorityBadgeColor(activeResult.priority)}`}>
+                        Priority: {activeResult.priority}
                       </span>
                     )}
                   </div>
                 </div>
 
-                <ConfidenceIndicator confidence={analysisResult.confidence} size="md" />
+                <ConfidenceIndicator confidence={activeResult.confidence} size="md" />
               </div>
 
               {/* Summary Description */}
               <div className="text-xs text-gray-300 leading-relaxed font-medium">
-                {analysisResult.summary}
+                {activeResult.summary}
               </div>
 
               {/* Suggested Actions Checklist */}
               <div className="space-y-2">
-                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Recommended Actions Checklist</span>
+                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest font-sans">Recommended Actions Checklist</span>
                 <div className="space-y-2 max-h-[160px] overflow-y-auto pr-1">
-                  {analysisResult.recommendedActions.map((action, idx) => {
+                  {activeResult.recommendedActions.map((action, idx) => {
                     const isDone = !!completedActions[idx];
                     return (
                       <button
@@ -308,34 +374,34 @@ export const AIDecisionCard: React.FC = () => {
               </div>
 
               {/* Reasoning basis panel */}
-              <AIReasoningPanel reasoning={analysisResult.reasoning} />
+              <AIReasoningPanel reasoning={activeResult.reasoning} />
 
               {/* Impact Indicators */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-[#1f293d]/50 pt-4 text-xs">
                 <div className="p-3 bg-fifa-green-950/10 border border-fifa-green-900/20 rounded-xl space-y-1">
-                  <span className="text-gray-500 font-bold uppercase text-[8px] tracking-wider flex items-center">
+                  <span className="text-gray-500 font-bold uppercase text-[8px] tracking-wider flex items-center font-sans">
                     <Sparkles className="w-3.5 h-3.5 mr-1 text-fifa-green-400" />
                     Projected Impact
                   </span>
-                  <span className="text-fifa-green-400 font-bold block leading-relaxed">{analysisResult.expectedImpact}</span>
+                  <span className="text-fifa-green-400 font-bold block leading-relaxed">{activeResult.expectedImpact}</span>
                 </div>
 
-                {analysisResult.estimatedQueueReduction && (
+                {activeResult.estimatedQueueReduction && (
                   <div className="p-3 bg-sky-950/10 border border-sky-900/20 rounded-xl space-y-1">
-                    <span className="text-gray-500 font-bold uppercase text-[8px] tracking-wider flex items-center">
+                    <span className="text-gray-500 font-bold uppercase text-[8px] tracking-wider flex items-center font-sans">
                       <Clock className="w-3.5 h-3.5 mr-1 text-sky-400" />
                       Queue reduction
                     </span>
-                    <span className="text-sky-400 font-bold block leading-relaxed">{analysisResult.estimatedQueueReduction}</span>
+                    <span className="text-sky-400 font-bold block leading-relaxed">{activeResult.estimatedQueueReduction}</span>
                   </div>
                 )}
               </div>
 
               {/* Audit Metadata */}
-              {(analysisResult.analysisId || analysisResult.analysisTimestamp) && (
+              {(activeResult.analysisId || activeResult.analysisTimestamp) && (
                 <div className="text-[8px] text-gray-600 flex justify-between items-center border-t border-[#1f293d]/30 pt-2.5 font-mono">
-                  <span>ID: {analysisResult.analysisId}</span>
-                  <span>UTC: {analysisResult.analysisTimestamp}</span>
+                  <span>ID: {activeResult.analysisId}</span>
+                  <span>UTC: {activeResult.analysisTimestamp}</span>
                 </div>
               )}
 
