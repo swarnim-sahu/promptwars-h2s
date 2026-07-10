@@ -85,7 +85,7 @@ export const AIRecommendationCard: React.FC<AIRecommendationCardProps> = ({ resp
       {/* Explainable AI Panels */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <AIReasoningPanel reasoning={response.reasoning} />
-        <AnnouncementPreview announcement={response.announcement} />
+        {response.announcement && <AnnouncementPreview announcement={response.announcement} />}
       </div>
 
       {/* Expected Impact */}

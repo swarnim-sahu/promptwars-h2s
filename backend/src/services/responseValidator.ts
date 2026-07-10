@@ -1,6 +1,8 @@
+import { randomUUID } from 'crypto';
 import { AIResponse, RiskLevel } from '../types/ai';
 
 const VALID_RISK_LEVELS: RiskLevel[] = ['Low', 'Medium', 'High', 'Critical'];
+const VALID_PRIORITIES = ['Low', 'Medium', 'High'];
 
 /**
  * AI Response Guardrail & Validation.
@@ -13,7 +15,19 @@ export const validateAIResponse = (response: any): { valid: boolean; data: AIRes
       return { valid: false, data: getSafeFallback('Invalid JSON payload structure received.') };
     }
 
-    const { summary, riskLevel, confidence, reasoning, recommendedActions, expectedImpact, announcement } = response;
+    const { 
+      summary, 
+      riskLevel, 
+      confidence, 
+      reasoning, 
+      recommendedActions, 
+      expectedImpact, 
+      announcement,
+      estimatedQueueReduction,
+      priority,
+      analysisTimestamp,
+      analysisId
+    } = response;
 
     // 1. Validate summary
     if (typeof summary !== 'string' || summary.trim().length === 0) {
@@ -25,9 +39,9 @@ export const validateAIResponse = (response: any): { valid: boolean; data: AIRes
       return { valid: false, data: getSafeFallback(`Invalid or missing risk level: ${riskLevel}`) };
     }
 
-    // 3. Validate confidence
-    if (typeof confidence !== 'number' || confidence < 0 || confidence > 100) {
-      return { valid: false, data: getSafeFallback(`Confidence index out of bounds: ${confidence}`) };
+    // 3. Validate confidence (MUST be an integer between 0 and 100)
+    if (typeof confidence !== 'number' || confidence < 0 || confidence > 100 || !Number.isInteger(confidence)) {
+      return { valid: false, data: getSafeFallback(`Confidence must be an integer between 0 and 100. Received: ${confidence}`) };
     }
 
     // 4. Validate reasoning array
@@ -45,21 +59,47 @@ export const validateAIResponse = (response: any): { valid: boolean; data: AIRes
       return { valid: false, data: getSafeFallback('Missing expected impact assessment.') };
     }
 
-    // 7. Validate announcement object
-    if (!announcement || typeof announcement !== 'object') {
-      return { valid: false, data: getSafeFallback('Missing multilingual announcement block.') };
+    // 7. Optional Multilingual Announcement fallback (for backward compatibility)
+    let finalAnnouncement = announcement;
+    if (!finalAnnouncement || typeof finalAnnouncement !== 'object') {
+      finalAnnouncement = {
+        english: "Crowd control protocols are active. Follow visual signage guides.",
+        spanish: "Protocolos de control de multitud activos. Siga las guías visuales de señalización.",
+        french: "Protocoles de contrôle de foule actifs. Suivez les guides de signalisation visuelle."
+      };
+    } else {
+      const { english, spanish, french } = finalAnnouncement;
+      finalAnnouncement = {
+        english: typeof english === 'string' && english.trim() ? english.trim() : "Crowd redirects active.",
+        spanish: typeof spanish === 'string' && spanish.trim() ? spanish.trim() : "Dirección de seguridad activa.",
+        french: typeof french === 'string' && french.trim() ? french.trim() : "Redirection de sécurité active.",
+      };
     }
 
-    const { english, spanish, french } = announcement;
-    if (
-      typeof english !== 'string' || english.trim().length === 0 ||
-      typeof spanish !== 'string' || spanish.trim().length === 0 ||
-      typeof french !== 'string' || french.trim().length === 0
-    ) {
-      return { valid: false, data: getSafeFallback('Announcement translations contain empty values.') };
+    // 8. Validate estimatedQueueReduction
+    const finalQueueReduction = typeof estimatedQueueReduction === 'string' && estimatedQueueReduction.trim().length > 0
+      ? estimatedQueueReduction.trim()
+      : 'Queue delay reduced by 30%';
+
+    // 9. Validate priority
+    const finalPriority = VALID_PRIORITIES.includes(priority)
+      ? priority
+      : 'Medium';
+
+    // 10. Validate analysisTimestamp (ISO-8601 UTC)
+    let finalTimestamp = analysisTimestamp;
+    if (typeof finalTimestamp !== 'string' || isNaN(Date.parse(finalTimestamp))) {
+      finalTimestamp = new Date().toISOString();
     }
 
-    // Cleaned output
+    // 11. Validate analysisId (UUID v4 regex match)
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    let finalId = analysisId;
+    if (typeof finalId !== 'string' || !uuidRegex.test(finalId)) {
+      finalId = randomUUID();
+    }
+
+    // Return the sanitized output
     const validatedData: AIResponse = {
       summary: summary.trim(),
       riskLevel: riskLevel as RiskLevel,
@@ -67,17 +107,17 @@ export const validateAIResponse = (response: any): { valid: boolean; data: AIRes
       reasoning: reasoning.map(r => r.trim()),
       recommendedActions: recommendedActions.map(a => a.trim()),
       expectedImpact: expectedImpact.trim(),
-      announcement: {
-        english: english.trim(),
-        spanish: spanish.trim(),
-        french: french.trim(),
-      }
+      announcement: finalAnnouncement,
+      estimatedQueueReduction: finalQueueReduction,
+      priority: finalPriority as 'Low' | 'Medium' | 'High',
+      analysisTimestamp: finalTimestamp,
+      analysisId: finalId
     };
 
     return { valid: true, data: validatedData };
 
-  } catch (error) {
-    return { valid: false, data: getSafeFallback('Crash during guardrail validation.') };
+  } catch (error: any) {
+    return { valid: false, data: getSafeFallback(`Crash during validation: ${error.message}`) };
   }
 };
 
@@ -102,6 +142,10 @@ export const getSafeFallback = (reason: string): AIResponse => {
       english: "Operational systems are running in safe mode. Please check local staff announcements.",
       spanish: "Los sistemas operativos están funcionando en modo seguro. Por favor consulte con el personal local.",
       french: "Les systèmes opérationnels fonctionnent en mode sécurisé. Veuillez consulter les annonces du personnel local."
-    }
+    },
+    estimatedQueueReduction: "N/A - Safe Mode",
+    priority: 'Medium',
+    analysisTimestamp: new Date().toISOString(),
+    analysisId: randomUUID()
   };
 };

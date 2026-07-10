@@ -45,7 +45,11 @@ export interface AIResponse {
   reasoning: string[];
   recommendedActions: string[];
   expectedImpact: string;
-  announcement: MultilingualAnnouncement;
+  announcement?: MultilingualAnnouncement;
+  estimatedQueueReduction?: string;
+  priority?: 'Low' | 'Medium' | 'High';
+  analysisTimestamp?: string;
+  analysisId?: string;
 }
 
 export interface DecisionHistory {

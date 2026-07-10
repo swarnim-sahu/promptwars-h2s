@@ -161,7 +161,11 @@ class GeminiService {
   // 1. Analyze Crowd Data (Real Gemini SDK Integration)
   async analyzeCrowdData(gateData: any, crowdVelocity: any): Promise<AIResponse> {
     const startTime = Date.now();
-    const prompt = crowdRiskPrompt_v1(JSON.stringify(gateData), JSON.stringify(crowdVelocity));
+    const combinedData = {
+      ...gateData,
+      ...(crowdVelocity && Object.keys(crowdVelocity).length > 0 ? { crowdVelocity } : {})
+    };
+    const prompt = crowdRiskPrompt_v1(JSON.stringify(combinedData));
     const promptVersion = 'crowdRiskPrompt_v1';
     
     let validatedData: AIResponse;
@@ -278,7 +282,7 @@ class GeminiService {
   // 5. Predict Crowd Risk (Simulation/Sandbox)
   async predictCrowdRisk(sensorData: any): Promise<AIResponse> {
     const startTime = Date.now();
-    const prompt = crowdRiskPrompt_v1(JSON.stringify(sensorData), 'unknown');
+    const prompt = crowdRiskPrompt_v1(JSON.stringify(sensorData));
     const promptVersion = 'crowdRiskPrompt_v1';
 
     const simulatedPayload = {

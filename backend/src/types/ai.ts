@@ -13,7 +13,11 @@ export interface AIResponse {
   reasoning: string[];
   recommendedActions: string[];
   expectedImpact: string;
-  announcement: MultilingualAnnouncement;
+  announcement?: MultilingualAnnouncement;
+  estimatedQueueReduction?: string;
+  priority?: 'Low' | 'Medium' | 'High';
+  analysisTimestamp?: string;
+  analysisId?: string;
 }
 
 export interface DecisionHistory {
@@ -32,7 +36,7 @@ export interface DecisionHistory {
 
 export interface AIMetric {
   timestamp: string;
-  executionTime: number; // millseconds
+  executionTime: number; // milliseconds
   responseSize: number; // bytes
   promptVersion: string;
   requestType: string;
