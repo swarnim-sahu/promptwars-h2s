@@ -10,6 +10,7 @@ import {
   announcementPrompt_v1,
   translationPrompt_v1,
   csvAnalysisPrompt_v1,
+  emergencyAnnouncementPrompt_v1,
 } from './promptBuilder';
 
 // Mock Databases in-memory
@@ -396,6 +397,63 @@ class GeminiService {
         clearInterval(interval);
       }
     }, 1000);
+  }
+
+  // 11. Multilingual Emergency Announcement Generator (Real Gemini SDK Integration)
+  async generateEmergencyAnnouncement(
+    incidentType: string,
+    location: string,
+    severity: string,
+    description: string,
+    audience: string,
+    tone: string
+  ): Promise<AIResponse> {
+    const startTime = Date.now();
+    const prompt = emergencyAnnouncementPrompt_v1(incidentType, location, severity, description, audience, tone);
+    const promptVersion = 'emergencyAnnouncementPrompt_v1';
+
+    let validatedData: AIResponse;
+    let success = false;
+    let responseText = '';
+
+    try {
+      // Execute the Gemini call using our wrapper containing timeout and retry protections
+      responseText = await this.executeGeminiCallWithRetryAndTimeout(prompt);
+      
+      let parsed;
+      try {
+        parsed = JSON.parse(responseText);
+      } catch (parseErr: any) {
+        throw new Error(`Failed to parse Gemini response as JSON: ${parseErr.message}`);
+      }
+
+      const validation = validateAIResponse(parsed);
+      validatedData = validation.data;
+      success = validation.valid;
+
+    } catch (error: any) {
+      console.error('[Gemini Service Error] generateEmergencyAnnouncement execution failed:', error.stack || error.message);
+      
+      // Fallback default multilingual emergency announcement based on inputs
+      validatedData = getSafeFallback(`Gemini announcement execution failure: ${error.message}`);
+      validatedData.announcement = {
+        english: `Attention all visitors in the ${location}: We are currently managing a ${incidentType.toLowerCase()} situation. Please follow local steward instructions and remain calm.`,
+        spanish: `Atención a todos los visitantes en ${location}: Actualmente estamos gestionando una situación de ${incidentType.toLowerCase()}. Por favor siga las instrucciones del personal y mantenga la calma.`,
+        french: `Attention à tous les visiteurs dans la zone ${location} : Nous gérons actuellement une situation de ${incidentType.toLowerCase()}. Veuillez suivre les instructions du personnel local et rester calme.`,
+      };
+      success = false;
+      responseText = JSON.stringify(validatedData);
+    }
+
+    this.logMetric(
+      'Emergency Announcement',
+      promptVersion,
+      startTime,
+      success,
+      responseText.length
+    );
+
+    return validatedData;
   }
 }
 

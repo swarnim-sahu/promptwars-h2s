@@ -11,7 +11,8 @@ import {
   getHistory,
   logOutcome,
   getMetrics,
-  checkGeminiHealth
+  checkGeminiHealth,
+  generateEmergencyAnnouncement
 } from '../controllers/aiController';
 
 const router = Router();
@@ -32,6 +33,7 @@ router.post('/recommendations', getRecommendations);
 // 2. Incident Summary & Comms Routes
 router.post('/summarize-incident', summarizeIncident);
 router.post('/announcement', createAnnouncement);
+router.post('/generate-announcement', generateEmergencyAnnouncement);
 
 // 3. CSV Ingest and Analytics Routes
 router.post('/parse-csv', upload.single('file'), parseCsvFile);

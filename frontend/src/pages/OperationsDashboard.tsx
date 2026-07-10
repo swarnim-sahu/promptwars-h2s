@@ -7,6 +7,7 @@ import { SystemHealthPanel } from '../components/operations/SystemHealthPanel';
 import { LiveEventFeed } from '../components/operations/LiveEventFeed';
 import { AnalyticsCharts } from '../components/operations/AnalyticsCharts';
 import { TelemetryUploadCard } from '../components/operations/TelemetryUploadCard';
+import { AIAnnouncementGenerator } from '../components/operations/AIAnnouncementGenerator';
 import type { AIResponse } from '../types';
 
 export const OperationsDashboard: React.FC = () => {
@@ -40,6 +41,9 @@ export const OperationsDashboard: React.FC = () => {
           onResetManual={() => setCsvAnalysisResult(null)} 
         />
       </div>
+
+      {/* AI Emergency Public Address Translation Announcement Generator widget */}
+      <AIAnnouncementGenerator />
 
       {/* Bottom Layout: Recharts Crowd flow analytics graph, Live match events feed, hardware lines status */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

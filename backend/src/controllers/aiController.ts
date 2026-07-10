@@ -297,3 +297,31 @@ export const checkGeminiHealth = async (req: Request, res: Response, next: NextF
     next(error);
   }
 };
+
+// 12. Multilingual Emergency Announcement Generator Controller
+export const generateEmergencyAnnouncement = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { incidentType, location, severity, description, audience, tone } = req.body;
+
+    if (!incidentType || !location || !severity || !description || !audience || !tone) {
+      res.status(400).json({ 
+        success: false, 
+        message: 'All parameters (incidentType, location, severity, description, audience, tone) are required.' 
+      });
+      return;
+    }
+
+    const result = await geminiService.generateEmergencyAnnouncement(
+      String(incidentType),
+      String(location),
+      String(severity),
+      String(description),
+      String(audience),
+      String(tone)
+    );
+
+    res.status(200).json({ success: true, data: result });
+  } catch (error) {
+    next(error);
+  }
+};

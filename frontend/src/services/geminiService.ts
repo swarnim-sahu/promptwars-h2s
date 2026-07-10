@@ -31,6 +31,26 @@ class GeminiClientService {
     return res.data.data;
   }
 
+  // 4b. Generate Multilingual Emergency Announcement
+  async generateEmergencyAnnouncement(
+    incidentType: string,
+    location: string,
+    severity: string,
+    description: string,
+    audience: string,
+    tone: string
+  ): Promise<AIResponse> {
+    const res = await apiClient.post('/ai/generate-announcement', {
+      incidentType,
+      location,
+      severity,
+      description,
+      audience,
+      tone
+    });
+    return res.data.data;
+  }
+
   // 5. Predict Crowd Risk
   async predictCrowdRisk(sensorData: Record<string, any>): Promise<AIResponse> {
     const res = await apiClient.post('/ai/predict-risk', { sensorData });
