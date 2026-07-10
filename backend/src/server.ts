@@ -1,6 +1,8 @@
 import app from './app';
 import { config } from './config/env';
 
+console.log("Gemini Key:", config.GEMINI_API_KEY ? "FOUND" : "NOT FOUND");
+console.log("Model:", config.GEMINI_MODEL);
 const server = app.listen(config.PORT, () => {
   console.log(`==================================================`);
   console.log(`StadiumMind AI - Command Center Backend is Running`);
