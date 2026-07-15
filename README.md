@@ -12,7 +12,17 @@
 
 ---
 
-## PromptWars Submission
+## Live Demo
+
+Frontend:
+https://promptwars-h2s.vercel.app
+
+Backend Status:
+https://stadiummind-backend.onrender.com/api/status
+
+---
+
+## Challenge Overview
 
 - **Challenge Vertical**: Smart Stadiums & Tournament Operations
 - **Primary Persona**: Stadium Operations Manager / Tournament Organizer
@@ -170,140 +180,7 @@ stadiummind-ai/
 
 ---
 
-## 9. Installation & Local Setup
-
-### 1. Prerequisites
-Ensure you have Node.js (v18+) and npm installed on your machine.
-
-### 2. Clone Repository
-```bash
-git clone https://github.com/swarnim-sahu/promptwars-h2s.git
-cd promptwars-h2s
-```
-
-### 3. Install Dependencies
-
-Install packages in the frontend:
-```bash
-cd frontend
-npm install
-```
-
-Install packages in the backend:
-```bash
-cd ../backend
-npm install
-```
-
-### 4. Environment Variables
-
-Create a `.env` file in the `/backend` directory:
-```env
-PORT=5000
-NODE_ENV=development
-GEMINI_API_KEY=YOUR_SECURE_GEMINI_API_KEY
-GEMINI_MODEL=gemini-3.1-flash-lite
-```
-
-Create a `.env` file in the `/frontend` directory:
-```env
-VITE_API_URL=http://localhost:5000/api
-```
-
-### 5. Running the Application
-
-Start the backend server:
-```bash
-cd backend
-npm run dev
-```
-The backend server runs at `http://localhost:5000`.
-
-Start the frontend server:
-```bash
-cd ../frontend
-npm run dev
-```
-The client dashboard opens at `http://localhost:5173`.
-
----
-
-## 10. The Intended Demonstration Flow
-
-Judges can follow this 2-minute demonstration flow:
-1. **Open Dashboard**: Launch the Operations Command Center page.
-2. **Upload Stadium Telemetry**: Drag and drop a stadium telemetry log file (`.csv`) into the uploader card.
-3. **Analyze with Gemini**: Click *Analyze Stats with Gemini AI* to query the safety engine.
-4. **Review Explainable AI**: Review the advisory checklist and the detailed **Reason 1, 2, 3** cards showing the model's logic.
-5. **Generate Emergency Announcement**: Set incident criteria (e.g. lost child), customize the audience and tone, and generate bilingual PA script announcements.
-6. **Export Report**: Click *Export AI Report* inside the Copilot card to download the final compliance JSON logs.
-
----
-
-## 11. API Endpoints Reference
-
-<details>
-<summary><b>Telemetry Ingestion API</b></summary>
-
-- `POST /api/ai/parse-csv`  
-  *Headers*: `Content-Type: multipart/form-data`  
-  *Payload*: Telemetry CSV file.  
-  *Returns*: Summary statistics JSON (Average Occupancy, Hotspots list, Volunteers).
-
-- `POST /api/ai/analyze-stats`  
-  *Headers*: `Content-Type: application/json`  
-  *Payload*: `{ "stats": { ...Summary stats object... } }`  
-  *Returns*: Structured `AIResponse` JSON containing risk levels, checklists, and reason arrays.
-</details>
-
-<details>
-<summary><b>Operational Core API</b></summary>
-
-- `POST /api/ai/analyze-crowd`  
-  *Payload*: `{ "gateData": { ... }, "crowdVelocity": { ... } }`  
-  *Returns*: Structured `AIResponse`.
-
-- `POST /api/ai/predict-risk`  
-  *Payload*: `{ "sensorData": { ... } }`  
-  *Returns*: Prediction statistics.
-
-- `POST /api/ai/recommendations`  
-  *Payload*: `{ "situation": "...", "resources": "..." }`  
-  *Returns*: AI recommendations.
-</details>
-
-<details>
-<summary><b>Emergency Comms API</b></summary>
-
-- `POST /api/ai/generate-announcement`  
-  *Payload*: `{ "incidentType": "...", "location": "...", "severity": "...", "description": "...", "audience": "...", "tone": "..." }`  
-  *Returns*: Multilingual PA announcements (EN, ES, FR) and translation confidence levels.
-
-- `POST /api/ai/summarize-incident`  
-  *Payload*: `{ "incidentLogs": "..." }`  
-  *Returns*: Incident synthesis.
-</details>
-
-<details>
-<summary><b>Logs & Health API</b></summary>
-
-- `GET /api/ai/history`  
-  *Returns*: History audit database array.
-
-- `POST /api/ai/history/:id/outcome`  
-  *Payload*: `{ "accepted": true, "notes": "..." }`  
-  *Returns*: Log status confirmation.
-
-- `GET /api/ai/metrics`  
-  *Returns*: AI performance logs.
-
-- `GET /api/ai/health-gemini`  
-  *Returns*: Diagnostics connectivity handshake check.
-</details>
-
----
-
-## 12. Future Scope
+## 9. Future Scope
 
 StadiumMind AI is designed to scale into a unified tournament platform:
 - **Volunteer Companion App**: A dedicated mobile companion assigning local tasks directly to stewards.
@@ -313,12 +190,8 @@ StadiumMind AI is designed to scale into a unified tournament platform:
 
 ---
 
-## 13. Contributors
+## 10. Contributors
 
 - **Swarnim Sahu** - Lead System Architect & Prompt Engineer - [GitHub Profile](https://github.com/swarnim-sahu)
 
 ---
-
-## 14. License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
