@@ -145,9 +145,12 @@ ${result.announcement.french}
     <div className="p-6 rounded-2xl border border-[#1f293d] bg-[#121826]/30 shadow-lg space-y-5">
       
       {/* Title */}
-      <div className="flex items-center space-x-2 border-b border-[#1f293d]/50 pb-3">
+      <div className="flex items-center space-x-3 border-b border-[#1f293d]/50 pb-3">
         <Megaphone className="w-5 h-5 text-fifa-gold-400" />
         <h3 className="font-extrabold text-white text-md tracking-tight uppercase">AI Multilingual Announcement Generator</h3>
+        <span className="text-[9px] font-bold px-2.5 py-0.5 rounded-full bg-fifa-gold-950/40 text-fifa-gold-400 border border-fifa-gold-900/30 font-sans uppercase">
+          Workflow Step 3: Multilingual PA Script Generator
+        </span>
       </div>
 
       <div className="flex flex-col xl:flex-row gap-6">
@@ -158,10 +161,12 @@ ${result.announcement.french}
           <div className="grid grid-cols-2 gap-4">
             {/* Incident Type */}
             <div className="space-y-1">
-              <label className="text-[9px] font-bold text-gray-500 uppercase tracking-widest block font-sans">Incident Type</label>
+              <label htmlFor="ann-incident-type" className="text-[9px] font-bold text-gray-500 uppercase tracking-widest block font-sans">Incident Type</label>
               <select
+                id="ann-incident-type"
                 value={incidentType}
                 onChange={(e) => setIncidentType(e.target.value)}
+                aria-label="Select incident category"
                 className="w-full px-2.5 py-1.5 rounded-lg border border-[#1c263c] bg-black/40 text-xs text-white focus:outline-none focus:border-fifa-gold-500"
               >
                 <option value="Congestion">Congestion</option>
@@ -174,10 +179,12 @@ ${result.announcement.french}
 
             {/* Severity */}
             <div className="space-y-1">
-              <label className="text-[9px] font-bold text-gray-500 uppercase tracking-widest block font-sans">Severity</label>
+              <label htmlFor="ann-severity" className="text-[9px] font-bold text-gray-500 uppercase tracking-widest block font-sans">Severity</label>
               <select
+                id="ann-severity"
                 value={severity}
                 onChange={(e) => setSeverity(e.target.value)}
+                aria-label="Select severity level"
                 className="w-full px-2.5 py-1.5 rounded-lg border border-[#1c263c] bg-black/40 text-xs text-white focus:outline-none focus:border-fifa-gold-500"
               >
                 <option value="Low">Low</option>
@@ -191,10 +198,12 @@ ${result.announcement.french}
           <div className="grid grid-cols-2 gap-4">
             {/* Audience Selector */}
             <div className="space-y-1">
-              <label className="text-[9px] font-bold text-gray-500 uppercase tracking-widest block font-sans">Target Audience</label>
+              <label htmlFor="ann-audience" className="text-[9px] font-bold text-gray-500 uppercase tracking-widest block font-sans">Target Audience</label>
               <select
+                id="ann-audience"
                 value={audience}
                 onChange={(e) => setAudience(e.target.value)}
+                aria-label="Select announcement target audience"
                 className="w-full px-2.5 py-1.5 rounded-lg border border-[#1c263c] bg-black/40 text-xs text-white focus:outline-none focus:border-fifa-gold-500"
               >
                 <option value="Entire Stadium">Entire Stadium</option>
@@ -208,10 +217,12 @@ ${result.announcement.french}
 
             {/* Tone Selector */}
             <div className="space-y-1">
-              <label className="text-[9px] font-bold text-gray-500 uppercase tracking-widest block font-sans">Target Tone</label>
+              <label htmlFor="ann-tone" className="text-[9px] font-bold text-gray-500 uppercase tracking-widest block font-sans">Target Tone</label>
               <select
+                id="ann-tone"
                 value={tone}
                 onChange={(e) => setTone(e.target.value)}
+                aria-label="Select announcement broadcast tone"
                 className="w-full px-2.5 py-1.5 rounded-lg border border-[#1c263c] bg-black/40 text-xs text-white focus:outline-none focus:border-fifa-gold-500"
               >
                 <option value="Normal">Normal</option>
@@ -224,23 +235,27 @@ ${result.announcement.french}
 
           {/* Location */}
           <div className="space-y-1">
-            <label className="text-[9px] font-bold text-gray-500 uppercase tracking-widest block font-sans">Location Coordinates</label>
+            <label htmlFor="ann-location" className="text-[9px] font-bold text-gray-500 uppercase tracking-widest block font-sans">Location Coordinates</label>
             <input
+              id="ann-location"
               type="text"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               placeholder="e.g. Sector 108 Gate B"
+              aria-label="Incident location description"
               className="w-full px-2.5 py-1.5 rounded-lg border border-[#1c263c] bg-black/40 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-fifa-gold-500"
             />
           </div>
 
           {/* Description */}
           <div className="space-y-1">
-            <label className="text-[9px] font-bold text-gray-500 uppercase tracking-widest block font-sans">Incident details description</label>
+            <label htmlFor="ann-description" className="text-[9px] font-bold text-gray-500 uppercase tracking-widest block font-sans">Incident details description</label>
             <textarea
+              id="ann-description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Describe the operational incident details briefly..."
+              aria-label="Short description of the incident"
               className="w-full h-20 p-2.5 rounded-lg border border-[#1c263c] bg-black/40 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-fifa-gold-500 resize-none"
             />
           </div>
@@ -353,6 +368,7 @@ ${result.announcement.french}
                   {/* Copy Active Translation */}
                   <button
                     onClick={() => copyToClipboard(getActiveAnnouncementText(), setCopiedActive)}
+                    aria-label="Copy active announcement translation to clipboard"
                     className="flex-1 flex items-center justify-center space-x-1.5 border border-[#1f293d] hover:bg-black/30 text-white font-bold text-[10px] py-2 rounded-lg transition-all"
                   >
                     {copiedActive ? (
@@ -371,6 +387,7 @@ ${result.announcement.french}
                   {/* Copy All Translations */}
                   <button
                     onClick={handleCopyAllLanguages}
+                    aria-label="Copy all generated translations to clipboard"
                     className="flex-1 flex items-center justify-center space-x-1.5 border border-[#1f293d] hover:bg-black/30 text-white font-bold text-[10px] py-2 rounded-lg transition-all"
                   >
                     {copiedAll ? (
@@ -389,6 +406,7 @@ ${result.announcement.french}
                   {/* Download active translation as TXT */}
                   <button
                     onClick={handleDownloadTxt}
+                    aria-label="Download active announcement translation as text file"
                     className="flex-1 flex items-center justify-center space-x-1.5 border border-[#1f293d] hover:bg-black/30 text-white font-bold text-[10px] py-2 rounded-lg transition-all"
                   >
                     <Download className="w-3.5 h-3.5" />
@@ -398,6 +416,7 @@ ${result.announcement.french}
                   {/* Regenerate Script */}
                   <button
                     onClick={() => handleSubmit()}
+                    aria-label="Regenerate announcement script"
                     className="flex items-center justify-center border border-[#1f293d] hover:bg-black/30 text-white font-bold text-[10px] px-3 py-2 rounded-lg transition-all"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />

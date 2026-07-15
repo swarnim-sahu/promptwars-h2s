@@ -11,7 +11,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [role, setRoleState] = useState<UserRole>(() => {
     const saved = localStorage.getItem('role');
-    return (saved as UserRole) || 'fan'; // default to fan mode
+    return (saved as UserRole) || 'Operations '; // default to fan mode
   });
 
   // Sync theme class to document element for Tailwind dark mode support

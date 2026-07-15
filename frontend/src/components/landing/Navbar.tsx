@@ -77,10 +77,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onScrollToSection }) => {
 
             {/* Launch Dashboard Button */}
             <Link
-              to={ROUTES.FAN_DASHBOARD}
+              to={ROUTES.OPS_DASHBOARD}
               className="bg-gradient-to-r from-fifa-green-600 to-fifa-green-700 hover:from-fifa-green-500 hover:to-fifa-green-600 text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-glow-green transition-all duration-300 hover:scale-[1.03]"
             >
-              Launch Dashboard
+              Launch Command Center
             </Link>
           </div>
 
@@ -125,11 +125,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onScrollToSection }) => {
           ))}
           <div className="pt-4 border-t border-gray-800">
             <Link
-              to={ROUTES.FAN_DASHBOARD}
+              to={ROUTES.OPS_DASHBOARD}
               onClick={() => setMobileMenuOpen(false)}
               className="block w-full text-center bg-gradient-to-r from-fifa-green-600 to-fifa-green-700 text-white font-bold py-3 rounded-xl"
             >
-              Launch Dashboard
+              Launch Command Center
             </Link>
           </div>
         </div>

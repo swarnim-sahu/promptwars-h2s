@@ -8,6 +8,10 @@ yarn-error.log*
 dist/
 build/
 .tsbuildinfo
+backend/dist/
+frontend/dist/
+coverage/
+.cache/
 
 # Environmental variables
 .env

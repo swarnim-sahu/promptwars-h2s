@@ -127,13 +127,17 @@ export const TelemetryUploadCard: React.FC<TelemetryUploadCardProps> = ({
     <div className="p-6 rounded-2xl border border-[#1f293d] bg-[#121826]/30 shadow-lg space-y-5">
       {/* Title */}
       <div className="flex items-center justify-between border-b border-[#1f293d]/50 pb-3">
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-3">
           <FileSpreadsheet className="w-5 h-5 text-fifa-gold-400" />
           <h3 className="font-extrabold text-white text-md tracking-tight uppercase">AI Telemetry Ingest & Analytics</h3>
+          <span className="text-[9px] font-bold px-2.5 py-0.5 rounded-full bg-fifa-gold-950/40 text-fifa-gold-400 border border-fifa-gold-900/30 font-sans uppercase">
+            Workflow Step 1: Ingest CSV Data
+          </span>
         </div>
         {file && (
           <button
             onClick={clearFile}
+            aria-label="Reset telemetry uploader"
             className="flex items-center space-x-1 text-xs text-rose-400 hover:text-rose-300 font-bold border border-rose-950 px-2.5 py-1 rounded-lg bg-rose-950/20 transition-all"
           >
             <Trash2 className="w-3.5 h-3.5" />
@@ -150,7 +154,11 @@ export const TelemetryUploadCard: React.FC<TelemetryUploadCardProps> = ({
           onDragLeave={handleDrag}
           onDrop={handleDrop}
           onClick={() => fileInputRef.current?.click()}
-          className={`border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center space-y-3 cursor-pointer transition-all ${
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInputRef.current?.click(); } }}
+          role="button"
+          tabIndex={0}
+          aria-label="Drag and drop telemetry log file or press Enter to browse files"
+          className={`border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center space-y-3 cursor-pointer transition-all focus:outline-none focus:border-fifa-gold-500 focus:ring-1 focus:ring-fifa-gold-500 ${
             isDragActive 
               ? 'border-fifa-gold-500 bg-fifa-gold-950/5' 
               : 'border-[#1f293d] bg-[#0c1220]/40 hover:border-[#2b3a56] hover:bg-[#121826]/30'
@@ -161,6 +169,8 @@ export const TelemetryUploadCard: React.FC<TelemetryUploadCardProps> = ({
             ref={fileInputRef}
             onChange={handleFileInput}
             accept=".csv"
+            aria-hidden="true"
+            tabIndex={-1}
             className="hidden"
           />
           <div className="p-3 bg-black/40 rounded-full border border-[#1f293d] text-gray-400">

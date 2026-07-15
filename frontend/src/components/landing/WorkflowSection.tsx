@@ -6,26 +6,26 @@ export const WorkflowSection: React.FC = () => {
   const steps = [
     {
       step: '01',
-      title: 'Collect Stadium Data',
-      desc: 'Aggregates live transit signals, ticket verification, and crowd camera feeds.',
+      title: 'Ingest Telemetry',
+      desc: 'Upload CSV logs or ingest sensor streams containing occupancy, entry rates, and medical logs.',
       icon: Database,
     },
     {
       step: '02',
       title: 'AI Analysis',
-      desc: 'Gemini models process crowd metrics, safety hazards, and resource gaps.',
+      desc: 'Gemini models process crowd metrics, safety hazards, and evaluate priorities.',
       icon: Search,
     },
     {
       step: '03',
-      title: 'Intelligent Recommendations',
-      desc: 'Suggests real-time rerouting, dispatcher assignments, or sensor overrides.',
+      title: 'Explainable Directive',
+      desc: 'Generates real-time rerouting, dispatcher checklists, and details exactly WHY decisions are recommended.',
       icon: Cpu,
     },
     {
       step: '04',
-      title: 'Better Match-Day Experience',
-      desc: 'Safe, sustainable, and inclusive event logistics for all matches.',
+      title: 'Action & Dispatch',
+      desc: 'Generate translated announcer announcements and export JSON reports for stadium compliance.',
       icon: CheckCircle,
     },
   ];
@@ -41,7 +41,7 @@ export const WorkflowSection: React.FC = () => {
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
             How StadiumMind AI Operates
           </h2>
-          <p className="text-gray-400 max-w-xl mx-auto text-sm">
+          <p className="text-gray-400 max-w-xl mx-auto text-sm font-medium leading-relaxed">
             Understanding the real-time processing sequence connecting stadium hardware to human coordination.
           </p>
         </div>
@@ -76,7 +76,7 @@ export const WorkflowSection: React.FC = () => {
 
                   <div className="space-y-2">
                     <h3 className="font-extrabold text-white text-lg">{item.title}</h3>
-                    <p className="text-gray-400 text-xs leading-relaxed max-w-xs mx-auto lg:mx-0">
+                    <p className="text-gray-400 text-xs leading-relaxed max-w-xs mx-auto lg:mx-0 font-medium">
                       {item.desc}
                     </p>
                   </div>

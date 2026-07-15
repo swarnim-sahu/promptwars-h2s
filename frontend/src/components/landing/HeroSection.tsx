@@ -78,9 +78,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onLearnMoreClick }) =>
             transition={{ delay: 0.1, duration: 0.6 }}
             className="text-4xl sm:text-6xl font-extrabold tracking-tight leading-[1.1] text-white"
           >
-            AI-Powered Stadium Intelligence for{' '}
+            AI Command Center for{' '}
             <span className="bg-gradient-to-r from-fifa-green-400 via-fifa-gold-400 to-emerald-400 bg-clip-text text-transparent">
-              FIFA World Cup 2026
+              Stadium Operations
             </span>
           </motion.h1>
 
@@ -89,9 +89,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onLearnMoreClick }) =>
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto lg:mx-0 leading-relaxed"
+            className="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium"
           >
-            Elevate crowd safety, operations, accessibility, and green metrics at major matches. A centralized neural interface built for fans, organizers, volunteers, and emergency squads.
+            Real-time operational intelligence, crowd safety management, AI-driven decision support, and volunteer coordination at FIFA-scale matches. Centralized neural command center designed specifically for Stadium Operations Managers.
           </motion.p>
 
           {/* CTAs */}
@@ -102,10 +102,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onLearnMoreClick }) =>
             className="flex flex-wrap items-center justify-center lg:justify-start gap-4"
           >
             <Link
-              to={ROUTES.FAN_DASHBOARD}
+              to={ROUTES.OPS_DASHBOARD}
               className="group relative flex items-center space-x-2 bg-gradient-to-r from-fifa-green-600 to-fifa-green-700 hover:from-fifa-green-500 hover:to-fifa-green-600 text-white font-bold px-7 py-3.5 rounded-xl shadow-glow-green hover:shadow-glow-green/80 transition-all duration-300 transform hover:scale-[1.02]"
             >
-              <span>Launch Dashboard</span>
+              <span>Launch Operations Center</span>
               <ArrowRight className="w-4.5 h-4.5 group-hover:translate-x-1 transition-transform" />
             </Link>
 

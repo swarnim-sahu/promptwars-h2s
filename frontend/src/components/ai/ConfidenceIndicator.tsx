@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { memo } from 'react';
 
 interface ConfidenceIndicatorProps {
   confidence: number;
   size?: 'sm' | 'md' | 'lg';
 }
 
-export const ConfidenceIndicator: React.FC<ConfidenceIndicatorProps> = ({ confidence, size = 'md' }) => {
+export const ConfidenceIndicator: React.FC<ConfidenceIndicatorProps> = memo(({ confidence, size = 'md' }) => {
   const radius = 24;
   const stroke = 3;
   const circumference = 2 * Math.PI * radius;
@@ -44,4 +44,4 @@ export const ConfidenceIndicator: React.FC<ConfidenceIndicatorProps> = ({ confid
       <span className="absolute font-extrabold text-white font-mono">{Math.round(confidence)}%</span>
     </div>
   );
-};
+});

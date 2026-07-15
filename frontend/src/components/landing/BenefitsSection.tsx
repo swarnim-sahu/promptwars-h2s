@@ -5,59 +5,59 @@ import { Users, Shield, Award, HelpCircle } from 'lucide-react';
 type BenefitTab = 'fans' | 'organizers' | 'volunteers' | 'emergency';
 
 export const BenefitsSection: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<BenefitTab>('fans');
+  const [activeTab, setActiveTab] = useState<BenefitTab>('organizers');
 
   const tabs: { id: BenefitTab; label: string; icon: any }[] = [
-    { id: 'fans', label: 'For Fans', icon: Users },
-    { id: 'organizers', label: 'For Organizers', icon: Shield },
-    { id: 'volunteers', label: 'For Volunteers', icon: Award },
+    { id: 'organizers', label: 'For Organizers & Managers', icon: Shield },
     { id: 'emergency', label: 'For Emergency Staff', icon: HelpCircle },
+    { id: 'volunteers', label: 'For Volunteer Stewards', icon: Award },
+    { id: 'fans', label: 'For Fans (Prototype)', icon: Users },
   ];
 
   const content = {
-    fans: {
-      headline: 'A Stress-Free Match-Day Experience',
-      desc: 'No more guessing transit times or getting lost in massive corridors. Fans get access to a companion AI assisting them through their journey.',
-      items: [
-        'Transit planner routing directly to dynamic, less crowded gates.',
-        'Wait-time predictors for food stands, restrooms, and concessions.',
-        'Accessible pathways routing specifically configured for strollers or wheelchair assistance.',
-        'Multilingual chat support to translate announcements instantly.',
-      ],
-      color: 'border-fifa-green-500/30 text-fifa-green-400',
-    },
     organizers: {
-      headline: 'Maximum Operational Oversight',
-      desc: 'Monitor crowd movements and stadium infrastructure telemetry from a single centralized console.',
+      headline: 'Maximum Stadium Operations Control',
+      desc: 'Monitor crowd safety and stadium infrastructure parameters from a unified Explainable AI command console.',
       items: [
-        'Real-time crowd flow density heatmaps indicating potential bottlenecks.',
-        'HVAC and lighting energy balancing reducing stadium utility consumption.',
-        'Automated dispatch alerts coordinating volunteer tasks based on crowd spikes.',
-        'Unified console integrating telemetry from gates, concession nodes, and ticket hubs.',
+        'Real-time crowd flow density heatmaps indicating bottleneck limits.',
+        'Actionable AI decision recommendations detail exactly WHY recommendations are generated.',
+        'Automated dispatch alerts coordinating volunteer tasks based on telemetry.',
+        'Unified dashboard integrating gate queues, concession nodes, and ticket check-ins.',
       ],
       color: 'border-fifa-gold-500/30 text-fifa-gold-400',
     },
-    volunteers: {
-      headline: 'Actionable In-Field Guidance',
-      desc: 'Equip volunteers with local tasks and route maps to assist lost or disabled fans efficiently.',
+    emergency: {
+      headline: 'Rapid Tactical Response Coordination',
+      desc: 'Accelerate first-responder dispatcher coordination by routing squads through optimal concourse pathways.',
       items: [
-        'Dynamic task queue assigning tasks based on volunteer location.',
-        'Step-by-step route guiding to dispatch points within the arena.',
-        'Quick accessibility reporting templates for reporting broken facilities.',
-        'Direct chat link with command center coordinators.',
+        'Priority incident summaries detailing location, logs, and severity thresholds.',
+        'Evacuation route calculations automatically directing foot traffic away from risk sectors.',
+        'Unified system health dashboard tracking sensor net, emergency net, and camera stream statuses.',
+        'Dynamic gate redirect instructions ensuring fast ingress/egress corridor creation.',
+      ],
+      color: 'border-rose-500/30 text-rose-400',
+    },
+    volunteers: {
+      headline: 'Directed Concourse Walkway Tasks',
+      desc: 'Equip volunteer stewards with local checklists and zone directions to manage congestion hotspots.',
+      items: [
+        'Dynamic task checklists based on AI recommendations logs.',
+        'Direct connection to the command center advisory announcements.',
+        'Facility reporting parameters tracking escalator or elevator failures.',
+        'Visual guides indicating spectator stand entries requiring crowd containment.',
       ],
       color: 'border-sky-500/30 text-sky-400',
     },
-    emergency: {
-      headline: 'Rapid Tactical Coordination',
-      desc: 'Accelerate medical response times by routing squads through clear concourse paths.',
+    fans: {
+      headline: 'Prototype: stress-free match attendance',
+      desc: 'Extensible mobile app prototype allowing fans to plan regional transport routes and view gate check-in delays.',
       items: [
-        'Priority incident alerts detailing type, location, and severity index.',
-        'Evacuation route calculations automatically directing traffic away from incident zones.',
-        'Live location tracking of paramedics and first-responder volunteers.',
-        'Dynamic gate locks integration enabling rapid exit-entry corridors.',
+        'Transit planner routing to underutilized gates.',
+        'Wait-time predictors forecasting restroom and concession queues.',
+        'Accessible pathways routing specifically configured for strollers or wheelchair assistance.',
+        'Multilingual translation system to read stadium PA broadcast announcements instantly.',
       ],
-      color: 'border-rose-500/30 text-rose-400',
+      color: 'border-fifa-green-500/30 text-fifa-green-400',
     },
   };
 
@@ -70,10 +70,10 @@ export const BenefitsSection: React.FC = () => {
             Operations Benefits
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
-            Why StadiumMind AI?
+            Targeted Operational Value
           </h2>
-          <p className="text-gray-400 max-w-xl mx-auto text-sm">
-            Discover the direct value added for every stakeholder attending or managing match day operations.
+          <p className="text-gray-400 max-w-xl mx-auto text-sm font-medium leading-relaxed">
+            Discover the direct value added for every stakeholder managing match day operations.
           </p>
         </div>
 
@@ -86,7 +86,7 @@ export const BenefitsSection: React.FC = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`relative flex items-center space-x-2 px-5 py-3 rounded-xl text-sm font-semibold tracking-wide transition-all ${
+                className={`relative flex items-center space-x-2 px-5 py-3 rounded-xl text-sm font-semibold tracking-wide transition-all focus:outline-none focus:ring-1 focus:ring-fifa-gold-500 ${
                   isActive ? 'text-white' : 'text-gray-500 hover:text-gray-300'
                 }`}
               >
@@ -106,57 +106,46 @@ export const BenefitsSection: React.FC = () => {
           })}
         </div>
 
-        {/* Tab Content Panel */}
-        <div className="min-h-[300px]">
+        {/* Tab Content Display */}
+        <div className="min-h-[300px] flex items-center">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.3 }}
-              className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center"
+              className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center"
             >
-              {/* Left Column Text details */}
+              {/* Left text description */}
               <div className="lg:col-span-7 space-y-6">
                 <h3 className="text-2xl font-extrabold text-white">
                   {content[activeTab].headline}
                 </h3>
-                <p className="text-gray-400 text-sm leading-relaxed">
+                <p className="text-gray-400 text-sm leading-relaxed font-medium">
                   {content[activeTab].desc}
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {content[activeTab].items.map((item, i) => (
-                    <div
-                      key={i}
-                      className="p-3 bg-[#121826]/30 border border-[#1f293d] rounded-xl text-xs text-gray-300 flex items-start space-x-2 leading-relaxed"
-                    >
-                      <span className="text-fifa-green-500 mt-0.5">✓</span>
+                <div className="h-px bg-[#1f293d]/50" />
+                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {content[activeTab].items.map((item, idx) => (
+                    <li key={idx} className="flex items-start space-x-3 text-xs text-gray-300 font-semibold leading-relaxed">
+                      <span className="w-2.5 h-2.5 rounded-full bg-fifa-green-500 mt-1 flex-shrink-0" />
                       <span>{item}</span>
-                    </div>
+                    </li>
                   ))}
-                </div>
+                </ul>
               </div>
 
-              {/* Right Column Graphic visualization overlay */}
-              <div className="lg:col-span-5 flex justify-center">
-                <div className={`w-full max-w-[340px] h-[240px] rounded-2xl border ${content[activeTab].color} bg-[#121826]/20 p-6 flex flex-col justify-between shadow-2xl relative overflow-hidden`}>
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-fifa-green-500/10 to-transparent blur-xl" />
-                  <div className="flex items-center space-x-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-fifa-green-500 animate-pulse" />
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">Value Index Sandbox</span>
-                  </div>
-                  <div className="space-y-2">
-                    <span className="block text-3xl font-extrabold text-white">
-                      {activeTab === 'fans' ? '98.5%' : activeTab === 'organizers' ? '2.5x' : activeTab === 'volunteers' ? '60%' : '3.8m'}
-                    </span>
-                    <span className="block text-xs text-gray-400 leading-normal">
-                      {activeTab === 'fans' && 'Reported satisfaction score for match flow assistance.'}
-                      {activeTab === 'organizers' && 'Efficiency multiplier in resolving crowd bottlenecks.'}
-                      {activeTab === 'volunteers' && 'Reduction in average task routing transit time.'}
-                      {activeTab === 'emergency' && 'Average response dispatch time (reduced by 45%).'}
-                    </span>
-                  </div>
+              {/* Right decorative visual box */}
+              <div className="lg:col-span-5 p-8 rounded-2xl border bg-black/10 flex flex-col justify-center space-y-4 border-[#1f293d]">
+                <div className="flex items-center space-x-2 border-b border-[#1f293d]/50 pb-3">
+                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest font-sans">Role Objective</span>
+                </div>
+                <div className="space-y-2">
+                  <span className="text-xs text-white font-extrabold uppercase tracking-tight block">Stadium Command Protocol</span>
+                  <p className="text-[11px] text-gray-400 leading-relaxed font-medium">
+                    This module connects to the centralized Gemini safety engine, delivering high-confidence decisions directly to the targeted operations teams.
+                  </p>
                 </div>
               </div>
             </motion.div>

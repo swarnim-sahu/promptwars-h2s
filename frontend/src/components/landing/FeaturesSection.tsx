@@ -1,42 +1,42 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Users, Compass, ShieldAlert, Accessibility, Leaf, Languages } from 'lucide-react';
+import { Users, Route, ShieldAlert, Accessibility, Leaf, Languages } from 'lucide-react';
 
 export const FeaturesSection: React.FC = () => {
   const features = [
     {
       title: 'AI Crowd Intelligence',
-      desc: 'Predictive bottleneck detection at gates, corridors, and concession lines to balance stadium traffic flow.',
+      desc: 'Predictive bottleneck detection at gates, corridors, and turnstile check-in queues to balance stadium traffic flow.',
       icon: Users,
       color: 'group-hover:text-fifa-green-400 group-hover:bg-fifa-green-950/30 text-fifa-green-400 border-fifa-green-800/30',
     },
     {
-      title: 'Smart Navigation',
-      desc: 'Dynamic, multi-modal routing directing fans from regional transit hubs straight to their stadium seating rows.',
-      icon: Compass,
+      title: 'Operations Flow Routing',
+      desc: 'Dynamic concourse routing directing traffic to underutilized gates and exit paths to relieve high crowd pressure.',
+      icon: Route,
       color: 'group-hover:text-fifa-gold-400 group-hover:bg-fifa-gold-950/30 text-fifa-gold-400 border-fifa-gold-800/30',
     },
     {
-      title: 'Emergency Response',
-      desc: 'Real-time alert dispatching connecting volunteers and paramedics instantly when incidents occur.',
+      title: 'AI Dispatch & Comms',
+      desc: 'Generates optimal steward task allocations, warning broadcasts, and incident summaries during match day surges.',
       icon: ShieldAlert,
       color: 'group-hover:text-rose-400 group-hover:bg-rose-950/30 text-rose-400 border-rose-800/30',
     },
     {
-      title: 'Accessibility Assistant',
-      desc: 'Accessible route layouts, automatic sign language avatars, and audio descriptive assistance for inclusivity.',
+      title: 'Inclusive Crowd Access',
+      desc: 'Ensures accessibility entrance lanes, descriptive guidance, and wheelchair path allocation analytics.',
       icon: Accessibility,
       color: 'group-hover:text-sky-400 group-hover:bg-sky-950/30 text-sky-400 border-sky-800/30',
     },
     {
-      title: 'Sustainability Insights',
-      desc: 'Smart recycling scanners, water utilization reports, and HVAC settings optimizations to lower the carbon footprint.',
+      title: 'Eco-Event Analytics',
+      desc: 'Tracks green metrics, water resource depletion, recycling logs, and HVAC parameters to lower event footprint.',
       icon: Leaf,
       color: 'group-hover:text-emerald-400 group-hover:bg-emerald-950/30 text-emerald-400 border-emerald-800/30',
     },
     {
-      title: 'Multilingual AI',
-      desc: 'Smart assistant capable of translating queries instantly across 6 languages to support international fans.',
+      title: 'Multilingual PA Scripting',
+      desc: 'Formulates clear, safety-oriented PA voice scripts translated instantly across English, Spanish, and French.',
       icon: Languages,
       color: 'group-hover:text-violet-400 group-hover:bg-violet-950/30 text-violet-400 border-violet-800/30',
     },
@@ -47,13 +47,13 @@ export const FeaturesSection: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         {/* Header */}
         <div className="text-center space-y-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-fifa-green-400 bg-fifa-green-950/20 px-3 py-1.5 rounded-full border border-fifa-green-800/40">
+          <span className="text-xs font-bold uppercase tracking-wider text-fifa-green-400 bg-fifa-green-950/20 px-3 py-1.5 rounded-full border border-fifa-green-800/40 animate-pulse">
             System Features
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
             Comprehensive Operational Suite
           </h2>
-          <p className="text-gray-400 max-w-xl mx-auto text-sm">
+          <p className="text-gray-400 max-w-xl mx-auto text-sm font-medium leading-relaxed">
             Discover the six core AI submodules configured to coordinate safety, routing, and green compliance.
           </p>
         </div>
@@ -78,11 +78,11 @@ export const FeaturesSection: React.FC = () => {
                   <h3 className="text-lg font-bold text-white group-hover:text-fifa-green-400 transition-colors">
                     {feat.title}
                   </h3>
-                  <p className="text-gray-400 text-xs leading-relaxed">{feat.desc}</p>
+                  <p className="text-gray-400 text-xs leading-relaxed font-medium">{feat.desc}</p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-[#1f293d]/50 flex justify-between items-center text-[10px] text-gray-500 font-bold uppercase tracking-widest">
-                  <span>Prepared Module</span>
-                  <span className="text-fifa-green-500">Active Sandbox</span>
+                  <span>Command Module</span>
+                  <span className="text-fifa-green-500 font-extrabold">Active Core</span>
                 </div>
               </motion.div>
             );

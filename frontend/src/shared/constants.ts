@@ -16,8 +16,5 @@ export const THEME_MODES = {
 } as const;
 
 export const USER_ROLES = {
-  FAN: 'fan',
-  ORGANIZER: 'organizer',
-  VOLUNTEER: 'volunteer',
-  EMERGENCY: 'emergency',
+  OPERATIONS_MANAGER: 'operations_manager',
 } as const;

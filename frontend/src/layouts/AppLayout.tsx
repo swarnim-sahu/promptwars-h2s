@@ -5,7 +5,7 @@ import { Sun, Moon, Shield, Users, Activity, Eye, Leaf, Settings as SettingsIcon
 import { APP_NAME, APP_TAGLINE, ROUTES } from '../shared/constants';
 
 export const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { theme, setTheme, role } = useApp();
+  const { theme, setTheme } = useApp();
   const location = useLocation();
 
   const toggleTheme = () => {
@@ -13,12 +13,12 @@ export const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children })
   };
 
   const navItems = [
-    { name: 'Home', path: ROUTES.LANDING, icon: Shield },
-    { name: 'Fan Dashboard', path: ROUTES.FAN_DASHBOARD, icon: Users },
-    { name: 'Ops Dashboard', path: ROUTES.OPS_DASHBOARD, icon: Activity },
-    { name: 'Accessibility', path: ROUTES.ACCESSIBILITY, icon: Eye },
-    { name: 'Sustainability', path: ROUTES.SUSTAINABILITY, icon: Leaf },
-    { name: 'Settings', path: ROUTES.SETTINGS, icon: SettingsIcon },
+    { name: 'Home Portal', path: ROUTES.LANDING, icon: Shield },
+    { name: 'Operations Center (Core)', path: ROUTES.OPS_DASHBOARD, icon: Activity },
+    { name: 'Fan App (Prototype)', path: ROUTES.FAN_DASHBOARD, icon: Users },
+    { name: 'A11y Center (Sandbox)', path: ROUTES.ACCESSIBILITY, icon: Eye },
+    { name: 'Eco Tracking (Sandbox)', path: ROUTES.SUSTAINABILITY, icon: Leaf },
+    { name: 'System Settings', path: ROUTES.SETTINGS, icon: SettingsIcon },
   ];
 
   return (
@@ -66,12 +66,11 @@ export const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children })
 
           {/* Controls */}
           <div className="flex items-center space-x-3">
-            {/* Quick Role Indicator */}
             <div className={`hidden sm:flex items-center text-xs font-semibold px-2.5 py-1 rounded-full ${
               theme === 'dark' ? 'bg-[#121826] border border-[#1f293d] text-fifa-gold-400' : 'bg-amber-50 border border-amber-200 text-amber-800'
             }`}>
               <AlertCircle className="w-3.5 h-3.5 mr-1" />
-              Role: {role.toUpperCase()}
+              Role: OPERATIONS MANAGER
             </div>
 
             {/* Dark Mode Toggle */}

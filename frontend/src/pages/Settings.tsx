@@ -6,10 +6,7 @@ export const Settings: React.FC = () => {
   const { theme, setTheme, role, setRole } = useApp();
 
   const roles: { value: UserRole; label: string; desc: string }[] = [
-    { value: 'fan', label: 'Fan Mode', desc: 'Standard ticket holder navigation, concessions wait times, and helper bot.' },
-    { value: 'organizer', label: 'Organizer Mode', desc: 'Crowd control heatmaps, vendor management, and full operation panels.' },
-    { value: 'volunteer', label: 'Volunteer Mode', desc: 'Incident responder interface and task lists for crowd assistance.' },
-    { value: 'emergency', label: 'Emergency Mode', desc: 'Priority notifications, medical dispatch, and fast route routing.' },
+    { value: 'operations_manager', label: 'Stadium Operations Manager', desc: 'Centralized command center copilot access, CSV telemetry uploads, safety advisor, and multilingual PA scripting.' },
   ];
 
   return (
