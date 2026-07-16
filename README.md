@@ -133,10 +133,30 @@ A rule-based system requires writing thousands of nested conditions (e.g., *if o
 
 ---
 
-## 7. Folder Structure
+## 7. Testing
+
+The project includes automated tests for both frontend and backend.
+
+Frontend:
+- Vitest
+- React Testing Library
+
+Backend:
+- Vitest
+- Supertest
+
+Run:
+
+Frontend
+npm test
+
+Backend
+npm test
+
+## 8. Folder Structure
 
 ```text
-stadiummind-ai/
+promptwars-h2s/
 ├── backend/
 │   ├── src/
 │   │   ├── config/          # Gemini configuration and env variables validation
@@ -164,7 +184,7 @@ stadiummind-ai/
 
 ---
 
-## 8. Screenshots
+## 9. Screenshots
 
 ### Landing Page
 ![Landing Page Mockup](./docs/screenshots/landing-page.png)
@@ -180,7 +200,7 @@ stadiummind-ai/
 
 ---
 
-## 9. Future Scope
+## 11. Future Scope
 
 StadiumMind AI is designed to scale into a unified tournament platform:
 - **Volunteer Companion App**: A dedicated mobile companion assigning local tasks directly to stewards.
@@ -190,8 +210,8 @@ StadiumMind AI is designed to scale into a unified tournament platform:
 
 ---
 
-## 10. Contributors
+## 12. Contributors
 
-- **Swarnim Sahu** - Lead System Architect & Prompt Engineer - [GitHub Profile](https://github.com/swarnim-sahu)
+- **Swarnim Kumar Sahu** - Lead System Architect & Prompt Engineer - [GitHub Profile](https://github.com/swarnim-sahu)
 
 ---
