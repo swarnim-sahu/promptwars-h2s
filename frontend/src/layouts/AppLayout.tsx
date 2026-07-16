@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { Sun, Moon, Shield, Users, Activity, Eye, Leaf, Settings as SettingsIcon, AlertCircle } from 'lucide-react';
+import { Sun, Moon, Shield, Activity, Eye, Leaf, Settings as SettingsIcon, AlertCircle } from 'lucide-react';
 import { APP_NAME, APP_TAGLINE, ROUTES } from '../shared/constants';
 
 export const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -15,7 +15,6 @@ export const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children })
   const navItems = [
     { name: 'Home Portal', path: ROUTES.LANDING, icon: Shield },
     { name: 'Operations Center (Core)', path: ROUTES.OPS_DASHBOARD, icon: Activity },
-    { name: 'Fan App (Prototype)', path: ROUTES.FAN_DASHBOARD, icon: Users },
     { name: 'A11y Center (Sandbox)', path: ROUTES.ACCESSIBILITY, icon: Eye },
     { name: 'Eco Tracking (Sandbox)', path: ROUTES.SUSTAINABILITY, icon: Leaf },
     { name: 'System Settings', path: ROUTES.SETTINGS, icon: SettingsIcon },

@@ -1,6 +1,7 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import React from 'react';
+import '@testing-library/jest-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { AppProvider } from '../context/AppContext';
 import { Navbar } from '../components/landing/Navbar';
@@ -205,7 +206,10 @@ describe('StadiumMind AI Frontend Components', () => {
     const { container } = render(
       <BrowserRouter>
         <AppProvider>
-          <TelemetryUploadCard onAnalysisComplete={handleAnalysisComplete} />
+          <TelemetryUploadCard 
+            onAnalysisComplete={handleAnalysisComplete} 
+            onReset={vi.fn()} 
+          />
         </AppProvider>
       </BrowserRouter>
     );

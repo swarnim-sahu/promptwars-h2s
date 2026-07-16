@@ -3,7 +3,6 @@ export const APP_TAGLINE = 'The AI Command Center for FIFA World Cup 2026';
 
 export const ROUTES = {
   LANDING: '/',
-  FAN_DASHBOARD: '/fan-dashboard',
   OPS_DASHBOARD: '/ops-dashboard',
   ACCESSIBILITY: '/accessibility',
   SUSTAINABILITY: '/sustainability',

@@ -8,10 +8,10 @@ export const BenefitsSection: React.FC = () => {
   const [activeTab, setActiveTab] = useState<BenefitTab>('organizers');
 
   const tabs: { id: BenefitTab; label: string; icon: any }[] = [
-    { id: 'organizers', label: 'For Organizers & Managers', icon: Shield },
-    { id: 'emergency', label: 'For Emergency Staff', icon: HelpCircle },
-    { id: 'volunteers', label: 'For Volunteer Stewards', icon: Award },
-    { id: 'fans', label: 'For Fans (Prototype)', icon: Users },
+    { id: 'organizers', label: 'Tournament Organizers', icon: Shield },
+    { id: 'emergency', label: 'Security Directors', icon: HelpCircle },
+    { id: 'volunteers', label: 'Operations Managers', icon: Award },
+    { id: 'fans', label: 'PA Safety Advisors', icon: Users },
   ];
 
   const content = {
@@ -27,8 +27,8 @@ export const BenefitsSection: React.FC = () => {
       color: 'border-fifa-gold-500/30 text-fifa-gold-400',
     },
     emergency: {
-      headline: 'Rapid Tactical Response Coordination',
-      desc: 'Accelerate first-responder dispatcher coordination by routing squads through optimal concourse pathways.',
+      headline: 'Tactical Security & Emergency Oversight',
+      desc: 'Accelerate security and first-responder dispatcher coordination by routing squads through optimal concourse pathways.',
       items: [
         'Priority incident summaries detailing location, logs, and severity thresholds.',
         'Evacuation route calculations automatically directing foot traffic away from risk sectors.',
@@ -38,8 +38,8 @@ export const BenefitsSection: React.FC = () => {
       color: 'border-rose-500/30 text-rose-400',
     },
     volunteers: {
-      headline: 'Directed Concourse Walkway Tasks',
-      desc: 'Equip volunteer stewards with local checklists and zone directions to manage congestion hotspots.',
+      headline: 'Operations Staff Task Coordination',
+      desc: 'Equip operations teams and volunteer coordinators with localized checklists and zone directions to resolve congestion hotspots.',
       items: [
         'Dynamic task checklists based on AI recommendations logs.',
         'Direct connection to the command center advisory announcements.',
@@ -49,13 +49,13 @@ export const BenefitsSection: React.FC = () => {
       color: 'border-sky-500/30 text-sky-400',
     },
     fans: {
-      headline: 'Prototype: stress-free match attendance',
-      desc: 'Extensible mobile app prototype allowing fans to plan regional transport routes and view gate check-in delays.',
+      headline: 'PA Announcement Broadcasting Control',
+      desc: 'Review, translate, and dispatch stadium-wide multilingual safety announcements to coordinate spectators and mitigate risks.',
       items: [
-        'Transit planner routing to underutilized gates.',
-        'Wait-time predictors forecasting restroom and concession queues.',
-        'Accessible pathways routing specifically configured for strollers or wheelchair assistance.',
-        'Multilingual translation system to read stadium PA broadcast announcements instantly.',
+        'Instant multi-language translation and speech duration checks.',
+        'Unified tone and severity selector settings.',
+        'Confidence score evaluation checks for translations.',
+        'Direct copy/download options for rapid PA dispatcher delivery.',
       ],
       color: 'border-fifa-green-500/30 text-fifa-green-400',
     },

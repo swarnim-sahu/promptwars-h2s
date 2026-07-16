@@ -55,7 +55,7 @@ export const Settings: React.FC = () => {
           <Shield className="w-5 h-5" />
           <h2 className="text-lg font-bold">Active Command Role</h2>
         </div>
-        <p className="text-sm text-gray-400">Simulate how the app dynamically refactors options and dashboard feeds according to user authentication clearance.</p>
+        <p className="text-sm text-gray-400">Your active operations command authorization is locked to the centralized Stadium Operations Manager clearance profile.</p>
         
         <div className="grid grid-cols-1 gap-4">
           {roles.map((r) => (
