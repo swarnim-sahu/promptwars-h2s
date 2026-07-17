@@ -22,12 +22,20 @@ export const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children })
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${theme === 'dark' ? 'bg-[#090d16] text-[#f3f4f6]' : 'bg-gray-50 text-gray-900'}`}>
+      {/* Skip Link for Accessibility */}
+      <a 
+        href="#main-content" 
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-fifa-gold-500 text-black px-4 py-2 rounded-lg font-bold z-50 focus:outline-none focus:ring-2 focus:ring-black"
+      >
+        Skip to main content
+      </a>
+
       {/* Header */}
       <header className={`sticky top-0 z-40 w-full border-b backdrop-blur-md transition-colors duration-300 ${theme === 'dark' ? 'bg-[#090d16]/80 border-[#1f293d]' : 'bg-white/80 border-gray-200'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-gradient-to-tr from-fifa-green-600 to-fifa-gold-500 rounded-lg shadow-glow-green">
-              <Shield className="w-6 h-6 text-white" />
+              <Shield className="w-6 h-6 text-white" aria-hidden="true" />
             </div>
             <div>
               <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-fifa-green-500 to-fifa-gold-400 bg-clip-text text-transparent m-0" style={{ fontSize: '1.25rem' }}>
@@ -38,7 +46,7 @@ export const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children })
           </div>
 
           {/* Navigation Items */}
-          <nav className="hidden md:flex space-x-1">
+          <nav className="hidden md:flex space-x-1" aria-label="Main Navigation">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
@@ -46,7 +54,7 @@ export const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children })
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`flex items-center space-x-2 px-3  h-9 rounded-lg text-sm font-medium transition-all ${
+                  className={`flex items-center space-x-2 px-3 h-9 rounded-lg text-sm font-medium transition-all ${
                     isActive
                       ? theme === 'dark'
                         ? 'bg-fifa-green-950/50 text-fifa-green-400 border border-fifa-green-800'
@@ -56,7 +64,7 @@ export const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children })
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                   }`}
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="w-4 h-4" aria-hidden="true" />
                   <span>{item.name}</span>
                 </Link>
               );
@@ -68,7 +76,7 @@ export const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children })
             <div className={`hidden sm:flex items-center text-xs font-semibold px-2.5 py-1 rounded-full ${
               theme === 'dark' ? 'bg-[#121826] border border-[#1f293d] text-fifa-gold-400' : 'bg-amber-50 border border-amber-200 text-amber-800'
             }`}>
-              <AlertCircle className="w-3.5 h-3.5 mr-1" />
+              <AlertCircle className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
               Role: OPERATIONS MANAGER
             </div>
 
@@ -82,14 +90,14 @@ export const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children })
               }`}
               aria-label="Toggle dark mode"
             >
-              {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              {theme === 'dark' ? <Sun className="w-5 h-5" aria-hidden="true" /> : <Moon className="w-5 h-5" aria-hidden="true" />}
             </button>
           </div>
         </div>
       </header>
 
       {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main id="main-content" tabIndex={-1} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 focus:outline-none">
         <div className="transition-all duration-300">
           {children}
         </div>

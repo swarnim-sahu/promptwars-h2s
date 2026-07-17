@@ -4,10 +4,26 @@ import { mockLiveEvents, type MockLiveEvent } from '../../shared/mockData';
 import { ShieldCheck, MessageSquare, AlertTriangle, TrendingUp, BellRing } from 'lucide-react';
 
 export const LiveEventFeed: React.FC = () => {
-  const [events, setEvents] = useState<MockLiveEvent[]>([mockLiveEvents[0]]);
-  const [nextIdx, setNextIdx] = useState(1);
+  const [events, setEvents] = useState<MockLiveEvent[]>([]);
+  const [nextIdx, setNextIdx] = useState(0);
+
+  // Initialize with first event on load
+  useEffect(() => {
+    if (mockLiveEvents.length > 0) {
+      setEvents([
+        {
+          ...mockLiveEvents[0],
+          id: `live-ev-init`,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+        }
+      ]);
+      setNextIdx(1);
+    }
+  }, []);
 
   useEffect(() => {
+    if (mockLiveEvents.length === 0) return;
+
     // Append a new simulated event every 8 seconds, cycling through the mock list
     const interval = setInterval(() => {
       const newEvent = {
@@ -25,12 +41,12 @@ export const LiveEventFeed: React.FC = () => {
 
   const getEventIcon = (type: MockLiveEvent['type']) => {
     switch (type) {
-      case 'goal': return <TrendingUp className="w-4 h-4 text-emerald-400 animate-bounce" />;
-      case 'surge': return <AlertTriangle className="w-4 h-4 text-yellow-500 animate-pulse" />;
-      case 'congestion': return <AlertTriangle className="w-4 h-4 text-red-400" />;
-      case 'medical': return <ShieldCheck className="w-4 h-4 text-rose-400" />;
-      case 'announcement': return <MessageSquare className="w-4 h-4 text-sky-400" />;
-      default: return <BellRing className="w-4 h-4 text-gray-400" />;
+      case 'goal': return <TrendingUp className="w-4 h-4 text-emerald-400 animate-bounce" aria-hidden="true" />;
+      case 'surge': return <AlertTriangle className="w-4 h-4 text-yellow-500 animate-pulse" aria-hidden="true" />;
+      case 'congestion': return <AlertTriangle className="w-4 h-4 text-red-400" aria-hidden="true" />;
+      case 'medical': return <ShieldCheck className="w-4 h-4 text-rose-400" aria-hidden="true" />;
+      case 'announcement': return <MessageSquare className="w-4 h-4 text-sky-400" aria-hidden="true" />;
+      default: return <BellRing className="w-4 h-4 text-gray-400" aria-hidden="true" />;
     }
   };
 
@@ -51,7 +67,7 @@ export const LiveEventFeed: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between border-b border-[#1f293d] pb-4">
         <div className="flex items-center space-x-2">
-          <BellRing className="w-5 h-5 text-fifa-gold-400 animate-swing" />
+          <BellRing className="w-5 h-5 text-fifa-gold-400 animate-swing" aria-hidden="true" />
           <h3 className="font-extrabold text-white text-lg tracking-tight">Live Matchday Feed</h3>
         </div>
         <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800 animate-pulse">
@@ -61,7 +77,13 @@ export const LiveEventFeed: React.FC = () => {
 
       {/* Events List View */}
       <div className="flex-1 overflow-hidden min-h-[160px] relative">
-        <div className="absolute inset-0 flex flex-col justify-start space-y-2">
+        <div 
+          role="log"
+          aria-live="polite"
+          aria-relevant="additions"
+          aria-label="Live incident alerts log"
+          className="absolute inset-0 flex flex-col justify-start space-y-2"
+        >
           <AnimatePresence initial={false}>
             {events.map((ev) => (
               <motion.div

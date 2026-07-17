@@ -19,31 +19,33 @@ export const Settings: React.FC = () => {
       {/* Theme Settings */}
       <div className="p-6 rounded-xl border border-[#1f293d] bg-[#121826]/40 space-y-4">
         <div className="flex items-center space-x-3 text-fifa-gold-400">
-          <Sliders className="w-5 h-5" />
+          <Sliders className="w-5 h-5" aria-hidden="true" />
           <h2 className="text-lg font-bold">Display Preferences</h2>
         </div>
         <p className="text-sm text-gray-400">Switch between dark mode (recommended for high-end premium contrast) and light mode.</p>
         <div className="flex space-x-4">
           <button
             onClick={() => setTheme('light')}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-lg border transition-all ${
+            aria-pressed={theme === 'light'}
+            className={`flex items-center space-x-2 px-4 py-2 rounded-lg border transition-all focus:outline-none focus:ring-1 focus:ring-fifa-gold-500 ${
               theme === 'light'
                 ? 'bg-fifa-green-50 border-fifa-green-200 text-fifa-green-700 font-semibold'
                 : 'border-[#1f293d] hover:bg-[#121826] text-gray-400'
             }`}
           >
-            <Sun className="w-4 h-4" />
+            <Sun className="w-4 h-4" aria-hidden="true" />
             <span>Light Mode</span>
           </button>
           <button
             onClick={() => setTheme('dark')}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-lg border transition-all ${
+            aria-pressed={theme === 'dark'}
+            className={`flex items-center space-x-2 px-4 py-2 rounded-lg border transition-all focus:outline-none focus:ring-1 focus:ring-fifa-gold-500 ${
               theme === 'dark'
                 ? 'bg-[#121826] border-fifa-gold-500 text-[#ffd700] font-semibold'
                 : 'border-gray-200 hover:bg-gray-100 text-gray-600'
             }`}
           >
-            <Moon className="w-4 h-4" />
+            <Moon className="w-4 h-4" aria-hidden="true" />
             <span>Dark Mode</span>
           </button>
         </div>
@@ -52,7 +54,7 @@ export const Settings: React.FC = () => {
       {/* Role Settings */}
       <div className="p-6 rounded-xl border border-[#1f293d] bg-[#121826]/40 space-y-4">
         <div className="flex items-center space-x-3 text-fifa-green-400">
-          <Shield className="w-5 h-5" />
+          <Shield className="w-5 h-5" aria-hidden="true" />
           <h2 className="text-lg font-bold">Active Command Role</h2>
         </div>
         <p className="text-sm text-gray-400">Your active operations command authorization is locked to the centralized Stadium Operations Manager clearance profile.</p>
@@ -62,7 +64,8 @@ export const Settings: React.FC = () => {
             <button
               key={r.value}
               onClick={() => setRole(r.value)}
-              className={`p-4 rounded-lg border text-left transition-all flex flex-col space-y-1 ${
+              aria-pressed={role === r.value}
+              className={`p-4 rounded-lg border text-left transition-all flex flex-col space-y-1 focus:outline-none focus:ring-1 focus:ring-fifa-green-500 ${
                 role === r.value
                   ? 'border-fifa-green-500 bg-fifa-green-950/20'
                   : 'border-[#1f293d] hover:bg-[#121826]/60'

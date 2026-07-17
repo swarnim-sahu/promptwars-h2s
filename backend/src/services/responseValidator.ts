@@ -4,17 +4,32 @@ import { AIResponse, RiskLevel } from '../types/ai';
 const VALID_RISK_LEVELS: RiskLevel[] = ['Low', 'Medium', 'High', 'Critical'];
 const VALID_PRIORITIES = ['Low', 'Medium', 'High'];
 
+interface RawAIResponse {
+  summary?: unknown;
+  riskLevel?: unknown;
+  confidence?: unknown;
+  reasoning?: unknown;
+  recommendedActions?: unknown;
+  expectedImpact?: unknown;
+  announcement?: unknown;
+  estimatedQueueReduction?: unknown;
+  priority?: unknown;
+  analysisTimestamp?: unknown;
+  analysisId?: unknown;
+}
+
 /**
  * AI Response Guardrail & Validation.
  * Ensures the generated AI response complies with the structured Explainable AI schemas.
  * Returns a safe operational fallback if validation fails.
  */
-export const validateAIResponse = (response: any): { valid: boolean; data: AIResponse } => {
+export const validateAIResponse = (response: unknown): { valid: boolean; data: AIResponse } => {
   try {
     if (!response || typeof response !== 'object') {
       return { valid: false, data: getSafeFallback('Invalid JSON payload structure received.') };
     }
 
+    const raw = response as RawAIResponse;
     const { 
       summary, 
       riskLevel, 
@@ -27,7 +42,7 @@ export const validateAIResponse = (response: any): { valid: boolean; data: AIRes
       priority,
       analysisTimestamp,
       analysisId
-    } = response;
+    } = raw;
 
     // 1. Validate summary
     if (typeof summary !== 'string' || summary.trim().length === 0) {
@@ -35,7 +50,7 @@ export const validateAIResponse = (response: any): { valid: boolean; data: AIRes
     }
 
     // 2. Validate riskLevel
-    if (!VALID_RISK_LEVELS.includes(riskLevel)) {
+    if (typeof riskLevel !== 'string' || !VALID_RISK_LEVELS.includes(riskLevel as RiskLevel)) {
       return { valid: false, data: getSafeFallback(`Invalid or missing risk level: ${riskLevel}`) };
     }
 
@@ -45,12 +60,20 @@ export const validateAIResponse = (response: any): { valid: boolean; data: AIRes
     }
 
     // 4. Validate reasoning array
-    if (!Array.isArray(reasoning) || reasoning.length === 0 || reasoning.some(r => typeof r !== 'string' || r.trim().length === 0)) {
+    if (!Array.isArray(reasoning) || reasoning.length === 0) {
+      return { valid: false, data: getSafeFallback('Missing or empty reasoning indicators.') };
+    }
+    const reasoningArray = reasoning as unknown[];
+    if (reasoningArray.some(r => typeof r !== 'string' || r.trim().length === 0)) {
       return { valid: false, data: getSafeFallback('Missing or empty reasoning indicators.') };
     }
 
     // 5. Validate recommendedActions array
-    if (!Array.isArray(recommendedActions) || recommendedActions.length === 0 || recommendedActions.some(a => typeof a !== 'string' || a.trim().length === 0)) {
+    if (!Array.isArray(recommendedActions) || recommendedActions.length === 0) {
+      return { valid: false, data: getSafeFallback('Missing or empty recommended operational actions.') };
+    }
+    const actionsArray = recommendedActions as unknown[];
+    if (actionsArray.some(a => typeof a !== 'string' || a.trim().length === 0)) {
       return { valid: false, data: getSafeFallback('Missing or empty recommended operational actions.') };
     }
 
@@ -60,19 +83,20 @@ export const validateAIResponse = (response: any): { valid: boolean; data: AIRes
     }
 
     // 7. Optional Multilingual Announcement fallback (for backward compatibility)
-    let finalAnnouncement = announcement;
-    if (!finalAnnouncement || typeof finalAnnouncement !== 'object') {
+    const rawAnnouncement = announcement as { english?: unknown; spanish?: unknown; french?: unknown } | undefined;
+    let finalAnnouncement: { english: string; spanish: string; french: string };
+    if (!rawAnnouncement || typeof rawAnnouncement !== 'object') {
       finalAnnouncement = {
         english: "Crowd control protocols are active. Follow visual signage guides.",
         spanish: "Protocolos de control de multitud activos. Siga las guías visuales de señalización.",
         french: "Protocoles de contrôle de foule actifs. Suivez les guides de signalisation visuelle."
       };
     } else {
-      const { english, spanish, french } = finalAnnouncement;
+      const { english, spanish, french } = rawAnnouncement;
       finalAnnouncement = {
         english: typeof english === 'string' && english.trim() ? english.trim() : "Crowd redirects active.",
         spanish: typeof spanish === 'string' && spanish.trim() ? spanish.trim() : "Dirección de seguridad activa.",
-        french: typeof french === 'string' && french.trim() ? french.trim() : "Redirection de sécurité active.",
+        french: typeof french === 'string' && french.trim() ? french.trim() : "Redirection de seguridad active.",
       };
     }
 
@@ -82,21 +106,25 @@ export const validateAIResponse = (response: any): { valid: boolean; data: AIRes
       : 'Queue delay reduced by 30%';
 
     // 9. Validate priority
-    const finalPriority = VALID_PRIORITIES.includes(priority)
+    const finalPriority = typeof priority === 'string' && VALID_PRIORITIES.includes(priority)
       ? priority
       : 'Medium';
 
     // 10. Validate analysisTimestamp (ISO-8601 UTC)
-    let finalTimestamp = analysisTimestamp;
-    if (typeof finalTimestamp !== 'string' || isNaN(Date.parse(finalTimestamp))) {
+    let finalTimestamp: string;
+    if (typeof analysisTimestamp !== 'string' || isNaN(Date.parse(analysisTimestamp))) {
       finalTimestamp = new Date().toISOString();
+    } else {
+      finalTimestamp = analysisTimestamp;
     }
 
     // 11. Validate analysisId (UUID v4 regex match)
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    let finalId = analysisId;
-    if (typeof finalId !== 'string' || !uuidRegex.test(finalId)) {
+    let finalId: string;
+    if (typeof analysisId !== 'string' || !uuidRegex.test(analysisId)) {
       finalId = randomUUID();
+    } else {
+      finalId = analysisId;
     }
 
     // Return the sanitized output
@@ -104,8 +132,8 @@ export const validateAIResponse = (response: any): { valid: boolean; data: AIRes
       summary: summary.trim(),
       riskLevel: riskLevel as RiskLevel,
       confidence,
-      reasoning: reasoning.map(r => r.trim()),
-      recommendedActions: recommendedActions.map(a => a.trim()),
+      reasoning: (reasoningArray as string[]).map(r => r.trim()),
+      recommendedActions: (actionsArray as string[]).map(a => a.trim()),
       expectedImpact: expectedImpact.trim(),
       announcement: finalAnnouncement,
       estimatedQueueReduction: finalQueueReduction,
@@ -116,8 +144,9 @@ export const validateAIResponse = (response: any): { valid: boolean; data: AIRes
 
     return { valid: true, data: validatedData };
 
-  } catch (error: any) {
-    return { valid: false, data: getSafeFallback(`Crash during validation: ${error.message}`) };
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error);
+    return { valid: false, data: getSafeFallback(`Crash during validation: ${msg}`) };
   }
 };
 
@@ -141,7 +170,7 @@ export const getSafeFallback = (reason: string): AIResponse => {
     announcement: {
       english: "Operational systems are running in safe mode. Please check local staff announcements.",
       spanish: "Los sistemas operativos están funcionando en modo seguro. Por favor consulte con el personal local.",
-      french: "Les systèmes opérationnels fonctionnent en mode sécurisé. Veuillez consulter les annonces du personnel local."
+      french: "Les sistemas opérationnels fonctionnent en mode sécurisé. Veuillez consulter les annonces du personnel local."
     },
     estimatedQueueReduction: "N/A - Safe Mode",
     priority: 'Medium',

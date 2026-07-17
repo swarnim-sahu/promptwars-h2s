@@ -1,11 +1,20 @@
 import { Request, Response, NextFunction } from 'express';
+import { ApiErrorResponse } from '../types/dto';
+
+export interface HttpError extends Error {
+  statusCode?: number;
+}
+
+interface DevErrorResponse extends ApiErrorResponse {
+  stack?: string;
+}
 
 export const errorHandler = (
-  err: any,
+  err: HttpError,
   req: Request,
-  res: Response,
+  res: Response<DevErrorResponse>,
   next: NextFunction
-) => {
+): void => {
   const statusCode = err.statusCode || 500;
   console.error(`[Error] ${req.method} ${req.url} :`, err.stack || err.message || err);
   

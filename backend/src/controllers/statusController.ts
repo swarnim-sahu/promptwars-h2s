@@ -1,6 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
+import { SystemStatusResponse } from '../types/dto';
 
-export const getStatus = (req: Request, res: Response, next: NextFunction) => {
+export const getStatus = (
+  req: Request, 
+  res: Response<SystemStatusResponse>, 
+  next: NextFunction
+): void => {
   try {
     res.status(200).json({
       success: true,

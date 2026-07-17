@@ -8,7 +8,6 @@ import {
   opsRecommendationPrompt_v1,
   incidentSummaryPrompt_v1,
   announcementPrompt_v1,
-  translationPrompt_v1,
   csvAnalysisPrompt_v1,
   emergencyAnnouncementPrompt_v1,
 } from './promptBuilder';
@@ -71,9 +70,13 @@ class GeminiService {
         attempts++;
         const response = await Promise.race([makeCall(), timeoutPromise]);
         return response.text || '';
-      } catch (err: any) {
-        const isAuthError = err.status === 401 || err.status === 403 || err.message?.includes('API_KEY_INVALID') || err.message?.includes('API key');
-        const isTimeout = err.message?.includes('timed out');
+      } catch (err: unknown) {
+        const errObject = err as Record<string, unknown> | null;
+        const status = errObject && typeof errObject.status === 'number' ? errObject.status : undefined;
+        const message = errObject && typeof errObject.message === 'string' ? errObject.message : '';
+
+        const isAuthError = status === 401 || status === 403 || message.includes('API_KEY_INVALID') || message.includes('API key');
+        const isTimeout = message.includes('timed out');
 
         // Do not retry on auth errors, timeouts, or maximum attempts reached
         if (isAuthError || isTimeout || attempts >= maxAttempts) {
@@ -82,7 +85,7 @@ class GeminiService {
 
         // Exponential backoff delay
         const delay = 1000 * Math.pow(2, attempts - 1);
-        console.warn(`[Gemini Service] Transient error on attempt ${attempts}. Retrying in ${delay}ms. Error:`, err.message);
+        console.warn(`[Gemini Service] Transient error on attempt ${attempts}. Retrying in ${delay}ms. Error:`, message);
         await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
@@ -135,12 +138,13 @@ class GeminiService {
           model: this.modelName 
         };
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       const elapsed = Date.now() - startTime;
-      console.error(`[Gemini Health Check] Handshake failed. Elapsed: ${elapsed}ms. SDK Error:`, err.stack || err.message);
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error(`[Gemini Health Check] Handshake failed. Elapsed: ${elapsed}ms. SDK Error:`, err instanceof Error ? err.stack : msg);
       return { 
         success: false, 
-        message: `Handshake failed: ${err.message}`, 
+        message: `Handshake failed: ${msg}`, 
         model: this.modelName 
       };
     }
@@ -150,7 +154,6 @@ class GeminiService {
   private logMetric(requestType: string, promptVersion: string, startTime: number, success: boolean, size: number) {
     const metric: AIMetric = {
       timestamp: new Date().toISOString(),
-      //@ts-ignore - compatibility with earlier types
       executionTime: Date.now() - startTime,
       responseSize: size,
       promptVersion,
@@ -158,10 +161,13 @@ class GeminiService {
       success,
     };
     metricsDatabase.push(metric);
+    if (metricsDatabase.length > 1000) {
+      metricsDatabase.shift();
+    }
   }
 
   // 1. Analyze Crowd Data (Real Gemini SDK Integration)
-  async analyzeCrowdData(gateData: any, crowdVelocity: any): Promise<AIResponse> {
+  async analyzeCrowdData(gateData: Record<string, unknown>, crowdVelocity: Record<string, unknown>): Promise<AIResponse> {
     const startTime = Date.now();
     const combinedData = {
       ...gateData,
@@ -178,22 +184,24 @@ class GeminiService {
       // Execute the Gemini call using our wrapper containing timeout and retry protections
       responseText = await this.executeGeminiCallWithRetryAndTimeout(prompt);
       
-      let parsed;
+      let parsed: unknown;
       try {
         parsed = JSON.parse(responseText);
-      } catch (parseErr: any) {
-        throw new Error(`Failed to parse Gemini response as JSON: ${parseErr.message}`);
+      } catch (parseErr: unknown) {
+        const parseMsg = parseErr instanceof Error ? parseErr.message : String(parseErr);
+        throw new Error(`Failed to parse Gemini response as JSON: ${parseMsg}`);
       }
 
       const validation = validateAIResponse(parsed);
       validatedData = validation.data;
       success = validation.valid;
 
-    } catch (error: any) {
-      console.error('[Gemini Service Error] analyzeCrowdData execution failed:', error.stack || error.message);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      console.error('[Gemini Service Error] analyzeCrowdData execution failed:', error instanceof Error ? error.stack : msg);
       
       // Safety operational fallback in case of errors/validation failure
-      validatedData = getSafeFallback(`Gemini execution failure: ${error.message}`);
+      validatedData = getSafeFallback(`Gemini execution failure: ${msg}`);
       success = false;
       responseText = JSON.stringify(validatedData);
     }
@@ -210,7 +218,7 @@ class GeminiService {
   }
 
   // 2. Generate Incident Summary (Simulation/Sandbox)
-  async generateIncidentSummary(incidentLogs: any): Promise<AIResponse> {
+  async generateIncidentSummary(incidentLogs: unknown): Promise<AIResponse> {
     const startTime = Date.now();
     const prompt = incidentSummaryPrompt_v1(JSON.stringify(incidentLogs));
     const promptVersion = 'incidentSummaryPrompt_v1';
@@ -218,7 +226,7 @@ class GeminiService {
     const simulatedPayload = {
       ...mockAIResponse,
       summary: `Summarized active medical logs: Incident Section 108 Row K paramedic dispatched for heat exhaustion. Status check: stable.`,
-      riskLevel: 'Medium',
+      riskLevel: 'Medium' as const,
     };
     const validation = validateAIResponse(simulatedPayload);
 
@@ -282,7 +290,7 @@ class GeminiService {
   }
 
   // 5. Predict Crowd Risk (Simulation/Sandbox)
-  async predictCrowdRisk(sensorData: any): Promise<AIResponse> {
+  async predictCrowdRisk(sensorData: Record<string, unknown>): Promise<AIResponse> {
     const startTime = Date.now();
     const prompt = crowdRiskPrompt_v1(JSON.stringify(sensorData));
     const promptVersion = 'crowdRiskPrompt_v1';
@@ -290,7 +298,7 @@ class GeminiService {
     const simulatedPayload = {
       ...mockAIResponse,
       summary: `AI predictive risk analysis: Anticipating 15% occupancy surge at Gate A in the next 15 minutes based on arriving train lists.`,
-      riskLevel: 'Low',
+      riskLevel: 'Low' as const,
     };
     const validation = validateAIResponse(simulatedPayload);
 
@@ -319,22 +327,24 @@ class GeminiService {
       // Execute the Gemini call using our wrapper containing timeout and retry protections
       responseText = await this.executeGeminiCallWithRetryAndTimeout(prompt);
       
-      let parsed;
+      let parsed: unknown;
       try {
         parsed = JSON.parse(responseText);
-      } catch (parseErr: any) {
-        throw new Error(`Failed to parse Gemini response as JSON: ${parseErr.message}`);
+      } catch (parseErr: unknown) {
+        const parseMsg = parseErr instanceof Error ? parseErr.message : String(parseErr);
+        throw new Error(`Failed to parse Gemini response as JSON: ${parseMsg}`);
       }
 
       const validation = validateAIResponse(parsed);
       validatedData = validation.data;
       success = validation.valid;
 
-    } catch (error: any) {
-      console.error('[Gemini Service Error] analyzeUploadedCsv execution failed:', error.stack || error.message);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      console.error('[Gemini Service Error] analyzeUploadedCsv execution failed:', error instanceof Error ? error.stack : msg);
       
       // Safety operational fallback in case of errors/validation failure
-      validatedData = getSafeFallback(`Gemini CSV execution failure: ${error.message}`);
+      validatedData = getSafeFallback(`Gemini CSV execution failure: ${msg}`);
       success = false;
       responseText = JSON.stringify(validatedData);
     }
@@ -353,6 +363,14 @@ class GeminiService {
   // 7. Decision History & Outcome logging
   getDecisionHistory(): DecisionHistory[] {
     return decisionsDatabase;
+  }
+
+  // Appends a new decision to log history, capped at 1000 items (sliding window cap)
+  addDecision(decision: DecisionHistory): void {
+    decisionsDatabase.push(decision);
+    if (decisionsDatabase.length > 1000) {
+      decisionsDatabase.shift();
+    }
   }
 
   saveDecisionOutcome(id: string, outcomeDetails: { accepted: boolean; executionStatus: DecisionHistory['executionStatus']; notes?: string; actualOutcome?: string }): DecisionHistory | null {
@@ -376,7 +394,7 @@ class GeminiService {
     situation: string, 
     resources: string, 
     onChunk: (chunk: AIStreamChunk) => void, 
-    onError: (err: any) => void
+    onError: (err: unknown) => void
   ): void {
     console.log('Gemini: streamRecommendations requested (streaming skeleton mode)');
     
@@ -420,26 +438,28 @@ class GeminiService {
       // Execute the Gemini call using our wrapper containing timeout and retry protections
       responseText = await this.executeGeminiCallWithRetryAndTimeout(prompt);
       
-      let parsed;
+      let parsed: unknown;
       try {
         parsed = JSON.parse(responseText);
-      } catch (parseErr: any) {
-        throw new Error(`Failed to parse Gemini response as JSON: ${parseErr.message}`);
+      } catch (parseErr: unknown) {
+        const parseMsg = parseErr instanceof Error ? parseErr.message : String(parseErr);
+        throw new Error(`Failed to parse Gemini response as JSON: ${parseMsg}`);
       }
 
       const validation = validateAIResponse(parsed);
       validatedData = validation.data;
       success = validation.valid;
 
-    } catch (error: any) {
-      console.error('[Gemini Service Error] generateEmergencyAnnouncement execution failed:', error.stack || error.message);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      console.error('[Gemini Service Error] generateEmergencyAnnouncement execution failed:', error instanceof Error ? error.stack : msg);
       
       // Fallback default multilingual emergency announcement based on inputs
-      validatedData = getSafeFallback(`Gemini announcement execution failure: ${error.message}`);
+      validatedData = getSafeFallback(`Gemini announcement execution failure: ${msg}`);
       validatedData.announcement = {
         english: `Attention all visitors in the ${location}: We are currently managing a ${incidentType.toLowerCase()} situation. Please follow local steward instructions and remain calm.`,
         spanish: `Atención a todos los visitantes en ${location}: Actualmente estamos gestionando una situación de ${incidentType.toLowerCase()}. Por favor siga las instrucciones del personal y mantenga la calma.`,
-        french: `Attention à tous les visiteurs dans la zone ${location} : Nous gérons actuellement une situation de ${incidentType.toLowerCase()}. Veuillez suivre les instructions du personnel local et rester calme.`,
+        french: `Attention à todos los visitantes dans la zone ${location} : Nous gérons actuellement une situation de ${incidentType.toLowerCase()}. Veuillez suivre les instructions du personnel local et rester calme.`,
       };
       success = false;
       responseText = JSON.stringify(validatedData);

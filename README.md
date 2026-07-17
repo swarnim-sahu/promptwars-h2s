@@ -1,7 +1,7 @@
 # StadiumMind AI
 
-> **The AI Command Center for FIFA World Cup 2026**  
-> A professional Explainable AI Operations Copilot built for the Google PromptWars Hackathon.
+> **The Explainable AI Command Center for FIFA World Cup 2026**
+> An AI-powered Tournament Operations Copilot built for the Google PromptWars Hackathon.
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18.3-cyan?style=for-the-badge&logo=react)](https://react.dev/)
@@ -14,23 +14,19 @@
 
 ## Live Demo
 
-Frontend:
-https://promptwars-h2s.vercel.app
-
-Backend Status:
-https://stadiummind-backend.onrender.com/api/status
-
+- **Frontend:** https://promptwars-h2s.vercel.app
+- **Backend Health:** https://stadiummind-backend.onrender.com/api/status
 ---
 
-## Challenge Overview
+## Challenge Vertical & Persona
 
-- **Challenge Vertical**: Smart Stadiums & Tournament Operations
-- **Primary Persona**: Stadium Operations Manager / Tournament Organizer
-- **Alignment**: This project provides a production-grade operations command center for World Cup organizers. It leverages Google Gemini to automate crowd risk evaluations, explain advisory logic using numbered reason badges, translate PA emergency announcer scripts, and export audit trails.
+**Challenge Vertical:** Smart Stadiums & Tournament Operations
 
----
+**Target Users:** Stadium Operations Managers, Security Chiefs, Tournament Organizers
 
-## 1. Problem Statement
+StadiumMind AI was designed to support decision-makers responsible for managing large-scale sporting events where crowd safety, emergency coordination, multilingual communication, and operational efficiency are critical.
+
+## Problem Statement
 
 Coordinating stadium logistics at a FIFA-scale event involves navigating high-pressure, multi-dimensional challenges:
 - **Crowd Congestion & Bottlenecks**: Rapid spikes in spectator arrivals from regional shuttle networks generate severe queues at gate turnstiles and walkway corridors.
@@ -44,9 +40,9 @@ Traditional monitoring dashboards display raw numbers (e.g. occupancy counts, la
 
 ---
 
-## 2. Solution
+## Solution
 
-StadiumMind AI acts as a neural operations copilot, bridging the gap between passive sensors and real-world coordination. By leveraging Google Gemini, it:
+StadiumMind AI acts as an AI operations copilot, bridging the gap between passive sensors and real-world coordination. By leveraging Google Gemini, it:
 1. Translates live telemetry arrays into actionable safety assessments.
 2. Explains the operational reasoning behind every recommendation.
 3. Automates the generation of calm, safety-focused multilingual PA scripts.
@@ -54,7 +50,7 @@ StadiumMind AI acts as a neural operations copilot, bridging the gap between pas
 
 ---
 
-## 3. Why Generative AI?
+## Why Generative AI?
 
 Rather than relying on simple hardcoded threshold rules, StadiumMind AI uses Google Gemini to perform multi-variable operational diagnostics:
 - **Dynamic Reasoning**: Evaluates how weather warnings, volunteer levels, and transport delays compound gate occupancy metrics.
@@ -62,12 +58,22 @@ Rather than relying on simple hardcoded threshold rules, StadiumMind AI uses Goo
 - **Multilingual PA Generation**: Generates calm, safety-focused stadium voice broadcasts under 80 words in English, Spanish, and French, avoiding alarmist words that could trigger panic.
 - **Structured Data Enforcement**: Guarantees JSON outputs using Gemini MIME forcing, ensuring seamless frontend visualization without parsing errors.
 
+## Prompt Engineering Strategy
+
+StadiumMind AI uses carefully structured prompts to ensure consistent, explainable, and operationally useful responses.
+
+- **Role Prompting:** Gemini is instructed to behave as a senior tournament operations advisor.
+- **Structured Output:** Responses follow predefined JSON schemas to simplify frontend rendering and validation.
+- **Explainable Responses:** Every recommendation includes clear reasoning instead of opaque AI outputs.
+- **Controlled Announcements:** Emergency announcements are generated using calm, concise language suitable for large public gatherings.
+- **Fallback Handling:** If telemetry is incomplete or inconsistent, the AI defaults to safe operational recommendations instead of making unsupported assumptions.
+
 ### Why Rule-Based Systems Fail
 A rule-based system requires writing thousands of nested conditions (e.g., *if occupancy > 80% and volunteers < 5 and rain = true...*). Such systems fail when encountering complex, fuzzy matchday realities. Gemini handles these variables holistically, formulating context-aware suggestions in real time.
 
 ---
 
-## 4. Key Features
+## Key Features
 
 | Feature | Description |
 | :--- | :--- |
@@ -80,10 +86,11 @@ A rule-based system requires writing thousands of nested conditions (e.g., *if o
 | **Compliance Report Export** | Downloads generated AI responses directly as structured `.json` reports. |
 | **Keyboard Accessibility** | Supports keydown triggers and full ARIA descriptions on drag-and-drop cards. |
 | **Transient Error Containment** | Implements execution timeout racing and exponential backoff retries. |
+| **Human-in-the-Loop Decision Making** | Operators review AI recommendations before actions are recorded. |
 
 ---
 
-## 5. System Architecture
+## System Architecture
 
 ```text
 +-------------------------------------------------------------+
@@ -121,7 +128,7 @@ A rule-based system requires writing thousands of nested conditions (e.g., *if o
 
 ---
 
-## 6. Technology Stack
+## Technology Stack
 
 - **Frontend**: React (v18.3) SPA, Vite (v5.2), TypeScript, Vanilla CSS
 - **Animations**: Framer Motion (v11.2)
@@ -132,8 +139,26 @@ A rule-based system requires writing thousands of nested conditions (e.g., *if o
 - **Model**: `gemini-3.1-flash-lite` (configured via env variables)
 
 ---
+## AI Workflow
 
-## 7. Testing
+1. Upload telemetry or incident details.
+2. Backend validates and processes the data.
+3. Google Gemini analyzes the validated data and generates explainable recommendations.
+4. Operators review AI suggestions.
+5. Decisions are recorded for operational tracking.
+
+## Practical Matchday Use Cases
+
+### Crowd Congestion
+The AI identifies congestion risks and recommends gate redirection before bottlenecks become unsafe.
+
+### Weather Disruption
+The AI evaluates weather alerts together with crowd density and recommends operational adjustments.
+
+### Medical Emergency
+The AI summarizes incident information and generates multilingual announcements to support rapid communication.
+
+## Testing
 
 The project includes automated tests for both frontend and backend.
 
@@ -148,12 +173,20 @@ Backend:
 Run:
 
 Frontend
+
+```bash
+cd frontend
 npm test
+```
 
 Backend
-npm test
 
-## 8. Folder Structure
+```bash
+cd backend
+npm test
+```
+
+## Folder Structure
 
 ```text
 promptwars-h2s/
@@ -184,7 +217,7 @@ promptwars-h2s/
 
 ---
 
-## 9. Screenshots
+## Screenshots
 
 ### Landing Page
 ![Landing Page Mockup](./docs/screenshots/landing-page.png)
@@ -199,8 +232,13 @@ promptwars-h2s/
 ![Multilingual Announcement Preview Mockup](./docs/screenshots/announcement-generator.png)
 
 ---
+## Assumptions & Limitations
 
-## 11. Future Scope
+- Some endpoints intentionally use local simulations to ensure deterministic demonstrations during hackathon evaluation.
+- Decision history is stored in memory and resets when the backend restarts.
+- Live AI features require internet connectivity and a valid Gemini API key.
+
+## Future Scope
 
 StadiumMind AI is designed to scale into a unified tournament platform:
 - **Volunteer Companion App**: A dedicated mobile companion assigning local tasks directly to stewards.
@@ -210,7 +248,7 @@ StadiumMind AI is designed to scale into a unified tournament platform:
 
 ---
 
-## 12. Contributors
+## Contributors
 
 - **Swarnim Kumar Sahu** - Lead System Architect & Prompt Engineer - [GitHub Profile](https://github.com/swarnim-sahu)
 

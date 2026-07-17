@@ -49,3 +49,34 @@ export interface AIStreamChunk {
   done: boolean;
   metadata?: Partial<AIResponse>;
 }
+
+export interface GateTelemetry {
+  [gateName: string]: number | undefined;
+}
+
+export interface CrowdVelocity {
+  [gateName: string]: number | undefined;
+}
+
+export interface TelemetryRecord {
+  timestamp: string;
+  gate: string;
+  occupancy: number;
+  entryRate: number;
+  weather: string;
+  volunteers: number;
+  medicalIncidents: number;
+}
+
+export interface ParsedTelemetryStats {
+  totalRecords: number;
+  averageOccupancy: number;
+  maxOccupancy: number;
+  maxOccupancyGate: string;
+  averageEntryRate: number;
+  totalMedical: number;
+  totalVolunteers: number;
+  uniqueGates: string[];
+  weatherSummary: string;
+  congestedGates: string[];
+}

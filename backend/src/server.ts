@@ -1,6 +1,17 @@
 import app from './app';
 import { config } from './config/env';
 
+// Fail-fast Environment Validation for Production Readiness
+if (config.NODE_ENV === 'production') {
+  if (!config.GEMINI_API_KEY) {
+    console.error("==================================================");
+    console.error("FATAL ERROR: Required environment variable GEMINI_API_KEY is missing in production mode.");
+    console.error("Terminating server startup.");
+    console.error("==================================================");
+    process.exit(1);
+  }
+}
+
 console.log("Gemini Key:", config.GEMINI_API_KEY ? "FOUND" : "NOT FOUND");
 console.log("Model:", config.GEMINI_MODEL);
 const server = app.listen(config.PORT, () => {

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import type { ThemeMode, UserRole, AppState } from '../types';
 
 const AppContext = createContext<AppState | undefined>(undefined);
@@ -30,8 +30,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const setTheme = (newTheme: ThemeMode) => setThemeState(newTheme);
   const setRole = (newRole: UserRole) => setRoleState(newRole);
 
+  const contextValue = useMemo(() => ({
+    theme,
+    role,
+    setTheme,
+    setRole
+  }), [theme, role]);
+
   return (
-    <AppContext.Provider value={{ theme, role, setTheme, setRole }}>
+    <AppContext.Provider value={contextValue}>
       {children}
     </AppContext.Provider>
   );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Navbar } from '../components/landing/Navbar';
 import { HeroSection } from '../components/landing/HeroSection';
 import { CommandCenterPreview } from '../components/landing/CommandCenterPreview';
@@ -12,11 +12,15 @@ import { useApp } from '../context/AppContext';
 
 export const Landing: React.FC = () => {
   const { theme } = useApp();
+  const shouldReduceMotion = useReducedMotion();
 
   const handleScrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      element.scrollIntoView({ 
+        behavior: shouldReduceMotion ? 'auto' : 'smooth', 
+        block: 'start' 
+      });
     }
   };
 
@@ -35,17 +39,17 @@ export const Landing: React.FC = () => {
       theme === 'dark' ? 'bg-[#090d16] text-[#f3f4f6]' : 'bg-gray-50 text-gray-900'
     }`}>
       {/* Background Floating Glowing Particles */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none" aria-hidden="true">
         {particles.map((particle) => (
           <motion.div
             key={particle.id}
-            initial={{ opacity: 0.1, y: 0 }}
-            animate={{
+            initial={shouldReduceMotion ? { opacity: 0.2, y: 0 } : { opacity: 0.1, y: 0 }}
+            animate={shouldReduceMotion ? undefined : {
               opacity: [0.1, 0.4, 0.1],
               y: [-15, 15, -15],
               x: [-10, 10, -10],
             }}
-            transition={{
+            transition={shouldReduceMotion ? undefined : {
               duration: particle.duration,
               repeat: Infinity,
               delay: particle.delay,
@@ -80,7 +84,7 @@ export const Landing: React.FC = () => {
         <StatsSection />
 
         {/* Section Break/Divider */}
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-4" aria-hidden="true">
           <div className="h-px bg-gradient-to-r from-transparent via-[#1f293d] to-transparent" />
         </div>
 
@@ -88,7 +92,7 @@ export const Landing: React.FC = () => {
         <FeaturesSection />
 
         {/* Section Break/Divider */}
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-4" aria-hidden="true">
           <div className="h-px bg-gradient-to-r from-transparent via-[#1f293d] to-transparent" />
         </div>
 
@@ -96,7 +100,7 @@ export const Landing: React.FC = () => {
         <WorkflowSection />
 
         {/* Section Break/Divider */}
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-4" aria-hidden="true">
           <div className="h-px bg-gradient-to-r from-transparent via-[#1f293d] to-transparent" />
         </div>
 

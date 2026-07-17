@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { MatchStatusCard } from '../components/operations/MatchStatusCard';
 import { KPIsGrid } from '../components/operations/KPIsGrid';
 import { StadiumHeatmap } from '../components/operations/StadiumHeatmap';
@@ -12,6 +12,14 @@ import type { AIResponse } from '../types';
 
 export const OperationsDashboard: React.FC = () => {
   const [csvAnalysisResult, setCsvAnalysisResult] = useState<AIResponse | null>(null);
+
+  const handleResetCsv = useCallback(() => {
+    setCsvAnalysisResult(null);
+  }, []);
+
+  const handleAnalysisComplete = useCallback((result: AIResponse) => {
+    setCsvAnalysisResult(result);
+  }, []);
 
   return (
     <div className="space-y-8">
@@ -29,8 +37,8 @@ export const OperationsDashboard: React.FC = () => {
 
       {/* Drag & Drop Telemetry CSV Ingest and Analytics Section */}
       <TelemetryUploadCard 
-        onAnalysisComplete={setCsvAnalysisResult} 
-        onReset={() => setCsvAnalysisResult(null)} 
+        onAnalysisComplete={handleAnalysisComplete} 
+        onReset={handleResetCsv} 
       />
 
       {/* Center Layout: Heatmap Seating Map & AI Decision advisory checklist */}
@@ -38,7 +46,7 @@ export const OperationsDashboard: React.FC = () => {
         <StadiumHeatmap />
         <AIDecisionCard 
           csvAnalysisResult={csvAnalysisResult || undefined} 
-          onResetManual={() => setCsvAnalysisResult(null)} 
+          onResetManual={handleResetCsv} 
         />
       </div>
 

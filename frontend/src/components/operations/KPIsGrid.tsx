@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Users, Clock, AlertTriangle, Leaf } from 'lucide-react';
 
@@ -36,12 +36,12 @@ export const KPIsGrid: React.FC = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const kpis = [
+  const kpis = useMemo(() => [
     { title: 'Live Occupancy', value: occupancy.toLocaleString(), max: ' / 72k Max', icon: Users, color: 'text-fifa-green-400 border-fifa-green-900/30' },
     { title: 'Avg Entry Wait Time', value: `${waitTime}m`, max: ' (Peak: 14m)', icon: Clock, color: 'text-fifa-gold-400 border-fifa-gold-900/30' },
     { title: 'Active Safety Alerts', value: alerts, max: ' Urgent Incident', icon: AlertTriangle, color: 'text-rose-400 border-rose-900/30' },
     { title: 'Sustainability Savings', value: `${ecoRate}%`, max: ' Power Draw Offset', icon: Leaf, color: 'text-emerald-400 border-emerald-900/30' },
-  ];
+  ], [occupancy, waitTime, alerts, ecoRate]);
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

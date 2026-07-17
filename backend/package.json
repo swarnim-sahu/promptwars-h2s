@@ -20,9 +20,11 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.6.0",
     "morgan": "^1.11.0",
     "multer": "^2.2.0",
-    "papaparse": "^5.5.4"
+    "papaparse": "^5.5.4",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",

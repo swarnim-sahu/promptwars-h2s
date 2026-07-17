@@ -1,17 +1,9 @@
-import React, { useState, useRef } from 'react';
-import { 
-  UploadCloud, 
-  FileSpreadsheet, 
-  CheckCircle, 
-  AlertCircle, 
-  Sparkles, 
-  Users, 
-  CloudSun, 
-  FlameKindling,
-  Trash2
-} from 'lucide-react';
+import React, { useState, useRef, useCallback } from 'react';
+import { FileSpreadsheet, AlertCircle, Trash2 } from 'lucide-react';
 import { geminiService } from '../../services/geminiService';
 import type { AIResponse } from '../../types';
+import { TelemetryDropzone } from './telemetry-upload/TelemetryDropzone';
+import { TelemetryParsedDashboard } from './telemetry-upload/TelemetryParsedDashboard';
 
 interface TelemetryUploadCardProps {
   onAnalysisComplete: (result: AIResponse) => void;
@@ -31,7 +23,7 @@ export const TelemetryUploadCard: React.FC<TelemetryUploadCardProps> = ({
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleDrag = (e: React.DragEvent) => {
+  const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (e.type === "dragenter" || e.type === "dragover") {
@@ -39,45 +31,9 @@ export const TelemetryUploadCard: React.FC<TelemetryUploadCardProps> = ({
     } else if (e.type === "dragleave") {
       setIsDragActive(false);
     }
-  };
+  }, []);
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragActive(false);
-
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      validateAndProcessFile(e.dataTransfer.files[0]);
-    }
-  };
-
-  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      validateAndProcessFile(e.target.files[0]);
-    }
-  };
-
-  const validateAndProcessFile = async (selectedFile: File) => {
-    setError(null);
-    setParsedStats(null);
-
-    // 1. File type verification
-    if (!selectedFile.name.toLowerCase().endsWith('.csv')) {
-      setError("Unsupported file format. Please upload a valid .csv telemetry spreadsheet.");
-      return;
-    }
-
-    // 2. File size verification (2MB limit)
-    if (selectedFile.size > 2 * 1024 * 1024) {
-      setError("File exceeds maximum allowable size. The upload limit is 2MB.");
-      return;
-    }
-
-    setFile(selectedFile);
-    await uploadAndParseFile(selectedFile);
-  };
-
-  const uploadAndParseFile = async (targetFile: File) => {
+  const uploadAndParseFile = useCallback(async (targetFile: File) => {
     setLoading(true);
     setUploadProgress(10);
     setError(null);
@@ -97,9 +53,45 @@ export const TelemetryUploadCard: React.FC<TelemetryUploadCardProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const runGeminiAnalysis = async () => {
+  const validateAndProcessFile = useCallback(async (selectedFile: File) => {
+    setError(null);
+    setParsedStats(null);
+
+    // 1. File type verification
+    if (!selectedFile.name.toLowerCase().endsWith('.csv')) {
+      setError("Unsupported file format. Please upload a valid .csv telemetry spreadsheet.");
+      return;
+    }
+
+    // 2. File size verification (2MB limit)
+    if (selectedFile.size > 2 * 1024 * 1024) {
+      setError("File exceeds maximum allowable size. The upload limit is 2MB.");
+      return;
+    }
+
+    setFile(selectedFile);
+    await uploadAndParseFile(selectedFile);
+  }, [uploadAndParseFile]);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragActive(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      validateAndProcessFile(e.dataTransfer.files[0]);
+    }
+  }, [validateAndProcessFile]);
+
+  const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      validateAndProcessFile(e.target.files[0]);
+    }
+  }, [validateAndProcessFile]);
+
+  const runGeminiAnalysis = useCallback(async () => {
     if (!parsedStats) return;
     setLoading(true);
     setError(null);
@@ -113,22 +105,22 @@ export const TelemetryUploadCard: React.FC<TelemetryUploadCardProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [parsedStats, onAnalysisComplete]);
 
-  const clearFile = () => {
+  const clearFile = useCallback(() => {
     setFile(null);
     setParsedStats(null);
     setError(null);
     setUploadProgress(0);
     onReset();
-  };
+  }, [onReset]);
 
   return (
     <div className="p-6 rounded-2xl border border-[#1f293d] bg-[#121826]/30 shadow-lg space-y-5">
       {/* Title */}
       <div className="flex items-center justify-between border-b border-[#1f293d]/50 pb-3">
         <div className="flex items-center space-x-3">
-          <FileSpreadsheet className="w-5 h-5 text-fifa-gold-400" />
+          <FileSpreadsheet className="w-5 h-5 text-fifa-gold-400" aria-hidden="true" />
           <h3 className="font-extrabold text-white text-md tracking-tight uppercase">AI Telemetry Ingest & Analytics</h3>
           <span className="text-[9px] font-bold px-2.5 py-0.5 rounded-full bg-fifa-gold-950/40 text-fifa-gold-400 border border-fifa-gold-900/30 font-sans uppercase">
             Workflow Step 1: Ingest CSV Data
@@ -138,9 +130,9 @@ export const TelemetryUploadCard: React.FC<TelemetryUploadCardProps> = ({
           <button
             onClick={clearFile}
             aria-label="Reset telemetry uploader"
-            className="flex items-center space-x-1 text-xs text-rose-400 hover:text-rose-300 font-bold border border-rose-950 px-2.5 py-1 rounded-lg bg-rose-950/20 transition-all"
+            className="flex items-center space-x-1 text-xs text-rose-400 hover:text-rose-300 font-bold border border-rose-950 px-2.5 py-1 rounded-lg bg-rose-950/20 transition-all focus:outline-none focus:ring-1 focus:ring-rose-500"
           >
-            <Trash2 className="w-3.5 h-3.5" />
+            <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
             <span>Reset Loader</span>
           </button>
         )}
@@ -148,39 +140,13 @@ export const TelemetryUploadCard: React.FC<TelemetryUploadCardProps> = ({
 
       {/* Drag & Drop Area */}
       {!file && (
-        <div
-          onDragEnter={handleDrag}
-          onDragOver={handleDrag}
-          onDragLeave={handleDrag}
+        <TelemetryDropzone
+          isDragActive={isDragActive}
+          fileInputRef={fileInputRef}
+          onDrag={handleDrag}
           onDrop={handleDrop}
-          onClick={() => fileInputRef.current?.click()}
-          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInputRef.current?.click(); } }}
-          role="button"
-          tabIndex={0}
-          aria-label="Drag and drop telemetry log file or press Enter to browse files"
-          className={`border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center space-y-3 cursor-pointer transition-all focus:outline-none focus:border-fifa-gold-500 focus:ring-1 focus:ring-fifa-gold-500 ${
-            isDragActive 
-              ? 'border-fifa-gold-500 bg-fifa-gold-950/5' 
-              : 'border-[#1f293d] bg-[#0c1220]/40 hover:border-[#2b3a56] hover:bg-[#121826]/30'
-          }`}
-        >
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileInput}
-            accept=".csv"
-            aria-hidden="true"
-            tabIndex={-1}
-            className="hidden"
-          />
-          <div className="p-3 bg-black/40 rounded-full border border-[#1f293d] text-gray-400">
-            <UploadCloud className="w-8 h-8 animate-bounce" />
-          </div>
-          <div className="text-center space-y-1">
-            <span className="block text-xs font-bold text-white">Drag & drop telemetry log or click to browse</span>
-            <span className="block text-[10px] text-gray-500">Supports standard CSV grids with Timestamp, Gate, Occupancy, Weather, and staff counts (Max: 2MB).</span>
-          </div>
-        </div>
+          onFileInputChange={handleFileInput}
+        />
       )}
 
       {/* Uploading progress indicator */}
@@ -191,7 +157,15 @@ export const TelemetryUploadCard: React.FC<TelemetryUploadCardProps> = ({
               <span>Uploading & Parsing telemetry log...</span>
               <span className="text-white">{uploadProgress}%</span>
             </div>
-            <div className="w-full bg-[#1c263c] h-1.5 rounded-full overflow-hidden">
+            <div 
+              role="progressbar"
+              aria-valuenow={uploadProgress}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuetext={`${uploadProgress}% uploaded`}
+              aria-label="CSV telemetry upload and parsing progress"
+              className="w-full bg-[#1c263c] h-1.5 rounded-full overflow-hidden"
+            >
               <div 
                 className="bg-fifa-gold-500 h-full transition-all duration-300"
                 style={{ width: `${uploadProgress}%` }}
@@ -203,8 +177,8 @@ export const TelemetryUploadCard: React.FC<TelemetryUploadCardProps> = ({
 
       {/* Parsing errors */}
       {error && (
-        <div className="p-4 border border-rose-950 bg-rose-950/10 rounded-xl flex items-start space-x-3 text-xs text-rose-300">
-          <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+        <div className="p-4 border border-rose-950 bg-rose-950/10 rounded-xl flex items-start space-x-3 text-xs text-rose-300" role="alert">
+          <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" aria-hidden="true" />
           <div className="space-y-1 leading-relaxed">
             <span className="block font-bold text-white">Ingestion Mismatch</span>
             <span className="block">{error}</span>
@@ -214,80 +188,13 @@ export const TelemetryUploadCard: React.FC<TelemetryUploadCardProps> = ({
 
       {/* Ingested Stats Review Dashboard Grid */}
       {parsedStats && (
-        <div className="space-y-4 animate-[fadeIn_0.3s_ease-out]">
-          
-          {/* Stats Review Card */}
-          <div className="p-5 border border-fifa-green-950 bg-fifa-green-950/5 rounded-2xl space-y-4">
-            <div className="flex items-center space-x-2 border-b border-fifa-green-950 pb-2">
-              <CheckCircle className="w-4 h-4 text-fifa-green-500" />
-              <span className="text-xs font-bold text-white uppercase tracking-tight">Telemetry Statistics Generated ({file?.name})</span>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              
-              <div className="p-3 bg-black/20 rounded-xl border border-[#1f293d]/50 space-y-1">
-                <span className="text-gray-500 text-[8px] font-bold uppercase tracking-wider block">Total records</span>
-                <span className="text-white text-md font-mono font-extrabold">{parsedStats.totalRecords}</span>
-              </div>
-
-              <div className="p-3 bg-black/20 rounded-xl border border-[#1f293d]/50 space-y-1">
-                <span className="text-gray-500 text-[8px] font-bold uppercase tracking-wider block">Average occupancy</span>
-                <span className="text-white text-md font-mono font-extrabold">{parsedStats.averageOccupancy}%</span>
-              </div>
-
-              <div className="p-3 bg-black/20 rounded-xl border border-[#1f293d]/50 space-y-1">
-                <span className="text-gray-500 text-[8px] font-bold uppercase tracking-wider block">Average entry rate</span>
-                <span className="text-white text-md font-mono font-extrabold">{parsedStats.averageEntryRate} /min</span>
-              </div>
-
-              <div className="p-3 bg-black/20 rounded-xl border border-[#1f293d]/50 space-y-1">
-                <span className="text-gray-500 text-[8px] font-bold uppercase tracking-wider block">Total volunteers</span>
-                <span className="text-white text-md font-mono font-extrabold flex items-center">
-                  <Users className="w-3.5 h-3.5 mr-1 text-gray-500" /> {parsedStats.totalVolunteers}
-                </span>
-              </div>
-
-              <div className="p-3 bg-black/20 rounded-xl border border-[#1f293d]/50 space-y-1">
-                <span className="text-gray-500 text-[8px] font-bold uppercase tracking-wider block">Weather environments</span>
-                <span className="text-white text-xs font-semibold truncate flex items-center">
-                  <CloudSun className="w-3.5 h-3.5 mr-1 text-sky-400" /> {parsedStats.weatherSummary}
-                </span>
-              </div>
-
-              <div className="p-3 bg-black/20 rounded-xl border border-[#1f293d]/50 space-y-1">
-                <span className="text-gray-500 text-[8px] font-bold uppercase tracking-wider block">Medical reports</span>
-                <span className="text-white text-md font-mono font-extrabold">{parsedStats.totalMedical}</span>
-              </div>
-
-              <div className="p-3 bg-black/20 rounded-xl border border-[#1f293d]/50 col-span-2 space-y-1">
-                <span className="text-gray-500 text-[8px] font-bold uppercase tracking-wider block">Congestion hotspots</span>
-                <span className="text-white text-xs font-bold truncate flex items-center">
-                  <FlameKindling className="w-3.5 h-3.5 mr-1 text-rose-500" />
-                  {parsedStats.congestedGates.length > 0 
-                    ? parsedStats.congestedGates.join(', ') 
-                    : 'None flagged (under 80% limit)'
-                  }
-                </span>
-              </div>
-
-            </div>
-          </div>
-
-          {/* Analyze CTA button */}
-          <div className="flex justify-end pt-1">
-            <button
-              onClick={runGeminiAnalysis}
-              disabled={loading}
-              className="flex items-center space-x-2 bg-gradient-to-r from-fifa-gold-500 to-fifa-gold-600 hover:from-fifa-gold-400 hover:to-fifa-gold-500 text-black font-extrabold text-xs px-6 py-3 rounded-xl shadow-glow-gold/15 hover:shadow-glow-gold/35 transition-all disabled:opacity-40"
-            >
-              <Sparkles className="w-4 h-4 animate-pulse" />
-              <span>{loading ? "Generating Report..." : "Analyze Stats with Gemini AI"}</span>
-            </button>
-          </div>
-
-        </div>
+        <TelemetryParsedDashboard
+          fileName={file?.name || ''}
+          parsedStats={parsedStats}
+          loading={loading}
+          onRunGeminiAnalysis={runGeminiAnalysis}
+        />
       )}
-
     </div>
   );
 };
